@@ -1,0 +1,2311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#fff8ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Doodle Judge</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>👑</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fff8ec; --ink:#2a2238; --muted:#776d86; --line:#eadcc6; --card:#ffffff;
+  --red:#ff5a3c; --red-d:#cf3a1f; --teal:#14a68c; --teal-d:#0c7a66; --imp:#7b4dff; --imp-d:#5530d6;
+  --gold:#ffbf2e; --gold-d:#d99a00; --shadow:0 3px 0 rgba(42,34,56,.10); color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--paper) radial-gradient(rgba(42,34,56,.07) 1px,transparent 1.3px) 0 0/18px 18px;color:var(--ink);
+  font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent;overscroll-behavior:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+h1,h2,h3,.big,.code,.btn,.timer,.word,.seg button,.logo,.lt{font-family:"Baloo 2",system-ui,sans-serif}
+h1{font-size:34px;line-height:1.05;margin:6px 0 4px}
+h2{font-size:24px;line-height:1.15;margin:4px 0 8px}
+h3{font-size:18px;margin:2px 0 6px}
+p{margin:6px 0}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.center{text-align:center}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;
+  background:rgba(255,248,236,.94);backdrop-filter:blur(6px);border-bottom:2px solid var(--line)}
+#me{font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:"Baloo 2",system-ui;font-size:19px}
+#right{display:flex;gap:6px;align-items:center}
+main{max-width:560px;margin:0 auto;padding:12px 16px calc(30px + env(safe-area-inset-bottom))}
+body.tv main{max-width:1180px}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:11px 16px;font-size:21px;font-weight:800;color:#fff;background:var(--red);
+  box-shadow:0 4px 0 var(--red-d);cursor:pointer;margin:10px 0;touch-action:manipulation;line-height:1.2}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--red-d)}
+.btn.teal{background:var(--teal);box-shadow:0 4px 0 var(--teal-d)}
+.btn.imp{background:var(--imp);box-shadow:0 4px 0 var(--imp-d)}
+.btn.gold{background:var(--gold);color:var(--ink);box-shadow:0 4px 0 var(--gold-d)}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{font-size:16px;padding:7px 12px;border-radius:12px;width:auto;display:inline-block;margin:4px 0}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.icon{border:2px solid var(--line);background:#fff;border-radius:12px;min-width:38px;height:38px;font-size:18px;cursor:pointer;padding:0 8px;color:var(--ink);line-height:1}
+.dot{width:10px;height:10px;border-radius:50%;background:#bbb;display:inline-block;flex:none}
+.dot.ok{background:#2fbf5b}.dot.bad{background:#e8322c}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+.logo{font-size:44px;font-weight:800;line-height:1;margin:18px 0 2px;text-align:center}
+.logo span{display:inline-block;transform:rotate(-3deg);color:var(--red)}
+.logo b{display:inline-block;transform:rotate(2deg);color:var(--imp)}
+.tag{text-align:center;color:var(--muted);margin:2px 0 14px}
+label.f{display:block;font-weight:700;margin:10px 0 4px}
+input.t,textarea.t{width:100%;font:inherit;font-size:20px;padding:11px 14px;border-radius:14px;border:2px solid var(--line);background:#fff;color:var(--ink);outline:none}
+input.t:focus,textarea.t:focus{border-color:var(--teal)}
+input.code-in{text-transform:uppercase;letter-spacing:6px;text-align:center;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:30px}
+textarea.t{font-size:16px;min-height:90px}
+.code{font-size:46px;font-weight:800;letter-spacing:7px;line-height:1;text-align:center}
+.qr{display:block;margin:8px auto;width:190px;height:190px;background:#fff;border-radius:10px}
+body.tv .qr{width:300px;height:300px}
+.qr svg{display:block;width:100%;height:100%}
+.players{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:4px 10px 4px 4px;font-weight:700}
+.chip.off{opacity:.45}
+.chip.pick{border-color:var(--imp);background:#efe8ff}
+.chip .x{border:0;background:none;font-size:16px;color:var(--muted);cursor:pointer;padding:0 2px}
+button.chip{cursor:pointer;font:inherit;font-weight:700;color:var(--ink)}
+.av{width:28px;height:28px;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;font-family:"Baloo 2",system-ui,sans-serif}
+.seg{display:flex;background:#f3ead9;border-radius:12px;padding:3px;gap:3px;flex-wrap:nowrap}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:6px 6px;font-weight:700;font-size:16px;color:var(--ink);cursor:pointer;min-width:44px}
+.seg button.on{background:#fff;box-shadow:0 2px 0 var(--line)}
+select.t{width:100%;font:inherit;font-size:17px;padding:9px 10px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink)}
+.set{display:grid;grid-template-columns:1fr;gap:4px}
+.set .k{font-weight:700;font-size:15px;margin-top:8px}
+.summary{display:flex;flex-wrap:wrap;gap:6px}
+.summary span{background:#f3ead9;border-radius:10px;padding:3px 9px;font-size:14px;font-weight:600}
+/* secret card */
+.secret{position:relative;min-height:220px;border-radius:24px;background:#2a2238;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:20px;cursor:pointer;touch-action:none;margin:12px 0;box-shadow:0 5px 0 #15101e}
+.secret .cover{font-family:"Baloo 2",system-ui,sans-serif;font-size:24px;font-weight:800}
+.secret .word{font-size:46px;font-weight:800;line-height:1;margin:6px 0;color:#ffd84a;word-break:break-word}
+.secret .lbl{opacity:.8;font-size:15px}
+.secret .role{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:24px;color:#ff8fb1;margin-bottom:4px}
+.peek{display:flex;align-items:center;justify-content:center;gap:8px;background:#2a2238;color:#fff;border-radius:14px;padding:9px 12px;margin:10px 0;
+  font-weight:700;cursor:pointer;touch-action:none;min-height:44px;text-align:center}
+.peek b{color:#ffd84a}
+/* drawing */
+.turnbar{display:flex;align-items:center;gap:10px;margin:2px 0 6px}
+.turnbar .who{flex:1;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:22px;line-height:1.1}
+.who.long{font-size:18px}
+.timer{font-size:30px;font-weight:800;min-width:48px;text-align:right}
+.timer.low{color:var(--red)}
+.tbar{height:9px;border-radius:9px;background:#efe3cf;overflow:hidden;margin:2px 0 8px}
+.tbar i{display:block;height:100%;background:var(--teal);width:100%;transition:width .2s linear}
+.tbar.low i{background:var(--red)}
+.boardwrap{position:relative;background:#fff;border-radius:18px;border:3px solid var(--ink);overflow:hidden;box-shadow:0 4px 0 rgba(42,34,56,.15);aspect-ratio:1}
+.boardwrap canvas{display:block;width:100%;height:100%;touch-action:none}
+.boardwrap.mine{border-color:var(--teal)}
+.boardwrap.sabw{border-color:var(--imp)}
+.boardwrap .over{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.7);font-family:"Baloo 2",system-ui,sans-serif;font-size:26px;font-weight:800;text-align:center;padding:20px}
+.boardwrap .over.blind{background:#2a2238;color:#fff;pointer-events:none;z-index:2}
+body.tv .boardwrap{max-width:calc(100vh - 230px);margin:0 auto}
+.tabs{display:flex;gap:6px;margin:0 0 8px}
+.tabs button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 6px;font-weight:800;font-size:15px;cursor:pointer;color:var(--ink);font-family:"Baloo 2",system-ui,sans-serif}
+.tabs button.on{border-color:var(--ink);background:#fff3c4}
+.tabs button.sab.on{border-color:var(--imp);background:#efe8ff}
+.tools{display:flex;gap:6px;margin:10px 0 6px}
+.tools button{flex:1;height:46px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:22px;cursor:pointer;touch-action:manipulation;color:var(--ink)}
+.tools button.on{border-color:var(--ink);background:#fff3c4}
+.colors{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.colors button{aspect-ratio:1;border-radius:50%;border:2px solid rgba(0,0,0,.15);cursor:pointer;touch-action:manipulation;padding:0}
+.colors button.on{outline:3px solid var(--ink);outline-offset:2px}
+.sizes{display:flex;gap:6px;margin-top:8px}
+.sizes button{flex:1;height:42px;border-radius:12px;border:2px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation}
+.sizes button.on{border-color:var(--ink);background:#fff3c4}
+.sizes i{display:block;border-radius:50%;background:var(--ink)}
+.bigwait{text-align:center;padding:26px 14px}
+.bigwait .e{font-size:64px;line-height:1}
+/* drawing cards */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body.tv .dgrid{grid-template-columns:repeat(4,1fr)}
+.dcard{position:relative;background:#fff;border:3px solid var(--line);border-radius:18px;padding:6px;display:flex;flex-direction:column;gap:6px}
+.dcard.fav{border-color:var(--gold);background:#fff6d6;box-shadow:0 0 0 3px rgba(255,191,46,.35)}
+.dcard .lt{position:absolute;top:10px;left:10px;background:var(--ink);color:#fff;border-radius:10px;min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;z-index:1}
+.dcard .crownmark{position:absolute;top:6px;right:8px;font-size:30px;z-index:1}
+.dcard img,.dcard .ph{width:100%;aspect-ratio:1;border-radius:12px;border:2px solid var(--line);background:#fff;display:block;cursor:zoom-in}
+.dcard .ph{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:30px;cursor:default}
+.dcard .btn{margin:0;font-size:17px;padding:7px}
+.dcard .nm{display:flex;align-items:center;gap:6px;font-weight:800;min-width:0;font-size:15px}
+.dcard .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dcard .by{font-size:13px;color:var(--imp);font-weight:700}
+.tries{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}
+.tries span{background:#fff;border:2px solid var(--line);border-radius:12px;padding:4px 10px;font-weight:800;font-family:"Baloo 2",system-ui,sans-serif;font-size:18px}
+.tries span.no{border-color:#e8a59a;background:#fff1ec;text-decoration:line-through}
+.tries span.yes{border-color:var(--teal);background:#e3f7f2}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choices .btn{margin:0;font-size:18px;padding:10px 6px;text-transform:none}
+.gform{display:flex;gap:8px;align-items:stretch;margin:8px 0}
+.gform input{flex:1;min-width:0}
+.gform .btn{width:auto;margin:0;padding:8px 16px}
+/* results */
+.reveal{text-align:center;border-radius:24px;padding:18px 14px;color:#fff;background:var(--imp);box-shadow:0 5px 0 var(--imp-d);margin:10px 0}
+.reveal.ok{background:var(--teal);box-shadow:0 5px 0 var(--teal-d)}
+.reveal.no{background:#8b8494;box-shadow:0 5px 0 #625b6b}
+.reveal.gold{background:var(--gold);color:var(--ink);box-shadow:0 5px 0 var(--gold-d)}
+.reveal.dark{background:#2a2238;box-shadow:0 5px 0 #15101e}
+.reveal .big{font-size:28px;font-weight:800;line-height:1.1}
+.reveal .w{display:inline-block;background:rgba(255,255,255,.2);border-radius:12px;padding:2px 12px;font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:26px;margin-top:6px}
+.favpic{display:block;width:min(260px,70%);margin:10px auto 4px;border-radius:16px;border:3px solid rgba(0,0,0,.15);background:#fff}
+.score{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:2px dashed var(--line)}
+.score:last-child{border-bottom:0}
+.score .n{flex:1;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score .p{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:22px}
+.score .g{font-weight:800;color:var(--teal);min-width:34px;text-align:right}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:18px 0 6px}
+.podium>div{flex:1;max-width:120px;line-height:1.2;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;text-align:center;border-radius:14px 14px 0 0;color:#fff;padding:8px 4px;font-weight:800;font-family:"Baloo 2",system-ui,sans-serif}
+.podium .n{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.twist{background:#e9e1ff;border:2px solid #cbb8ff;border-radius:16px;padding:10px 12px;margin:8px 0;text-align:center}
+.judgebar{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff3c4;border:2px solid #f1d77a;border-radius:14px;padding:6px 10px;margin:6px 0;font-weight:800}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;z-index:50;
+  font-weight:700;max-width:90vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.banner{background:#fff3c4;border:2px solid #f1d77a;border-radius:14px;padding:8px 12px;margin:8px 0;font-weight:600;font-size:15px}
+.banner.lock{background:#2a2238;color:#fff;border-color:#2a2238;text-align:center;font-size:17px}
+.modal{position:fixed;inset:0;background:rgba(30,24,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal .box{background:var(--paper);border-radius:22px;padding:14px;width:100%;max-width:520px;max-height:92vh;overflow:auto}
+.modal img{width:100%;border-radius:14px;border:2px solid var(--line);background:#fff;display:block}
+.rules li{margin:4px 0}
+.hint{font-size:14px;color:var(--muted);text-align:center;margin:4px 0}
+.wobble{animation:wob 1.2s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+.pulse{animation:pul 1s ease-in-out infinite}
+@keyframes pul{50%{transform:scale(1.06)}}
+</style>
+</head>
+<body>
+<header><div id="me">👑 Doodle Judge</div><div id="right"></div></header>
+<main id="main"></main>
+<script>
+"use strict";
+// =====================================================================
+//  Doodle Judge — one-file party drawing game.
+//  One player is the judge; everyone else draws the secret word at the
+//  same time. The judge guesses the word, then crowns a favorite drawing.
+//  One phone hosts; messages go through a public MQTT-over-WebSocket
+//  relay, so no server is needed. (Same engine as Doodle Impostor.)
+// =====================================================================
+
+// ---------------------------------------------------------------------
+//  Text (English / Spanish)
+// ---------------------------------------------------------------------
+const T = {
+  en: {
+    title: "Doodle Judge",
+    tagline: "Everyone draws the secret word. The judge has to guess it — then crowns the best (or funniest) doodle.",
+    host: "Host a game", join: "Join a game", roomCode: "Room code", yourName: "Your name",
+    namePh: "Type your name", joinBtn: "Join", create: "Create room", back: "Back",
+    tvMode: "Use this device as a big screen (not a player)",
+    howTo: "How to play",
+    rules: [
+      "Each round one player is the 👑 judge. Everyone else gets the same secret word.",
+      "Everyone draws the word at the same time before the timer runs out. No letters or numbers!",
+      "The drawings are shown to the judge with no names, and the judge tries to guess the word.",
+      "Then the judge crowns ⭐ the best or funniest drawing.",
+      "The judge role moves to the next player every round.",
+      "😈 Saboteur (optional): one player secretly draws someone else's card as well as their own. That player is locked out, watches their card get drawn live, and tries to name the saboteur.",
+      "🃏 Odd one out (optional): one drawer secretly gets a different word — and doesn't know it!",
+    ],
+    scoring: "Points: word guessed → every drawer +1 and the judge +2 · Crowned drawing +1 (to whoever really drew it) · Saboteur: the locked-out player +1 for naming the saboteur, otherwise the saboteur +1 · Odd one out +1 if the judge guesses their word.",
+    resumeHost: "Resume hosting room {code}", resumeJoin: "Rejoin room {code}", forget: "Forget",
+    connecting: "Connecting…", findingRoom: "Looking for room {code}…",
+    lobby: "Waiting for players", shareHint: "Scan to join, or go to this page and type the code.",
+    copyLink: "Copy link", share: "Share link", linkCopied: "Link copied",
+    players: "Players", need3: "You need at least 3 players.", start: "Start game",
+    waitHost: "Waiting for the host to start…",
+    settings: "Settings", category: "Words", mix: "Mix of everything (no 18+)", custom: "My own words",
+    customHint: "Type words separated by commas or new lines (at least 8 is best).",
+    customN: "{n} custom words", drawTime: "Draw time", rounds: "Rounds",
+    lapsHint: "👑×1 = everyone is the judge once, 👑×2 = twice.",
+    hint: "Judge sees category", on: "On", off: "Off", language: "Language",
+    guessMode: "Judge guesses by", gmType: "⌨️ Typing it", gmPick: "🔢 Picking from 8",
+    gmHint: "Typing gives 2 tries and forgives small typos. Picking is easier.",
+    you: "you", round: "Round {n}", roundOf: "Round {n} of {m}",
+    holdSecret: "Press & hold to see your secret 👆", holdPeek: "👁 Hold to peek at your word",
+    secretWord: "Your secret word", category2: "Category: {c}", noCat: "No hint this time!",
+    youJudge: "👑 You're the JUDGE",
+    judgeTip: "Relax while everyone draws. Then guess the word from their drawings and crown your favorite!",
+    drawTip: "Draw it! No letters or numbers. The judge has to guess it.",
+    youSab: "😈 You're the SABOTEUR",
+    sabTip: "Draw your own card AND secretly draw {name}'s card too. Switch between them with the tabs. Don't get caught!",
+    youLocked: "🔒 You're locked out!",
+    lockedTip: "Someone is secretly drawing YOUR card this round. Watch it appear live and work out who it is!",
+    ready: "I'm ready", readyWait: "Waiting for everyone… ({n}/{m} ready)", startDrawing: "Start drawing now",
+    gettingSecret: "Getting your secret…",
+    drawThis: "Draw: {w}", yourCard: "Your card", forName: "{name}'s card",
+    done: "Done ✓", timesUp: "Time's up!", doneN: "{n}/{m} done",
+    judgeWait: "Everyone's drawing… get ready to guess!", watchWait: "Everyone's drawing…",
+    lockedWatch: "🔒 Someone is drawing YOUR card:", lockedMuted: "Look closely… whose style is that?",
+    passNow: "🔄 Finish {name}'s drawing!", passWait: "🔄 Passing the drawings…", passLeg: "Part {n}/2",
+    tools: { pen: "Pen", fill: "Fill", eraser: "Eraser", undo: "Undo", clear: "Clear" },
+    guessYou: "👑 What's the word?", guessOther: "👑 {name} is guessing…", noHelp: "🤐 No helping!",
+    guessPh: "Type your guess", guessBtn: "Guess", lastTry: "Nope! One more try.", triesLeft: "Tries left: {n}",
+    gotIt: "{name} got it! ✅", missed: "{name} didn't get it ❌", wordWas: "The word was",
+    overruled: "✓ The host counted the guess as right",
+    pickYou: "⭐ Crown the best or funniest drawing!", pickOther: "⭐ {name} is picking a favorite…", crown: "⭐ Crown",
+    accuseTitle: "🔒 Who drew your card?", accuseSub: "Pick who you think secretly drew it.", accusePicked: "You picked {name}",
+    accuseWait: "🔒 Waiting for the locked-out player to name the saboteur…",
+    countIt: "✓ Count the guess as right", revealNow: "Show results now",
+    cardN: "Card {l}", emptyCard: "nothing drawn",
+    favWas: "⭐ {name}'s drawing was crowned!", favBy: "…but {name} really drew it! 😈", noFav: "No drawing was crowned this time.",
+    allCards: "Whose drawing was whose",
+    drawnBy: "drawn by {name}", drawnBy2: "started by {a}, finished by {b}",
+    oddWas: "🃏 Odd one out: {name} secretly had “{w}”!", oddFooled: "…and the judge guessed it! +1 to {name}",
+    sabWas: "😈 {sab} secretly drew {victim}'s card!", accRight: "{victim} figured it out! 🎯 +1", accWrong: "{victim} guessed {to} — wrong! +1 to {sab}",
+    accNone: "{victim} didn't name anyone. +1 to {sab}",
+    judgeTries: "The judge's guesses",
+    scores: "Scores", nextRound: "Next round ▶", finalResults: "Final results 🏆", endGame: "End game",
+    waitNext: "Waiting for the host…", gameOver: "Game over!", playAgain: "Play again", winner: "{name} wins!", tie2: "It's a tie!",
+    menu: "Menu", skipRound: "Skip this round (no points)", leave: "Leave game",
+    leaveConfirm: "Leave this game?", endConfirm: "End the game now and show final scores?",
+    removeConfirm: "Remove {name} from the game?", removed: "You were removed from the game.",
+    full: "This room is full (12 players).", hostBack: "Reconnecting to the host…",
+    newPlayer: "You joined mid-round — you'll play next round. Enjoy the show!",
+    close: "Close", sound: "Sound",
+    relayNote: "Each phone needs internet. Drawings and names pass through a free public relay.",
+    nameTaken: "Pick a name", hostFallback: "Trying another relay…",
+    modes: "Game modes", cats: "Categories", twist: "Twist",
+    twists: { none: "🎨 Normal", blind: "🙈 Blind drawing", oneline: "✍️ One line only", speed: "⚡ Speed (30s)", pass: "🔄 Pass it on", random: "🎲 Random each round" },
+    twistDesc: { none: "No twist this round. Draw like normal!", blind: "You can't see your own drawing while you draw!", oneline: "One stroke only: once you lift your finger, you're done!",
+      speed: "Only 30 seconds to draw!", pass: "Halfway through, your drawing gets passed to someone else to finish!" },
+    twistNow: "Twist this round: {t}", blindCover: "🙈 Drawing blind!", oneLineTip: "✍️ One stroke only — don't lift your finger!",
+    sab: "Saboteur", sabHint: "One drawer secretly draws someone else's card too (4+ players). Not used in Pass-it-on rounds.",
+    odd: "Odd one out", oddHint: "One drawer secretly gets a different word and doesn't know it (4+ players).",
+    adultNote: "🔞 After Dark words are for adults only.",
+    aborted: "Round cancelled", abortJudge: "The judge left the game.", abortFew: "Not enough players left.",
+    customCat: "Custom", normalMode: "Normal (classic)", judgeIs: "👑 Judge: {name}",
+  },
+  es: {
+    title: "Juez de Garabatos",
+    tagline: "Todos dibujan la palabra secreta. El juez tiene que adivinarla y luego corona el mejor (o el más chistoso) garabato.",
+    host: "Crear partida", join: "Unirme a una partida", roomCode: "Código de sala", yourName: "Tu nombre",
+    namePh: "Escribe tu nombre", joinBtn: "Entrar", create: "Crear sala", back: "Atrás",
+    tvMode: "Usar este dispositivo como pantalla grande (sin jugar)",
+    howTo: "Cómo se juega",
+    rules: [
+      "En cada ronda un jugador es el 👑 juez. Todos los demás reciben la misma palabra secreta.",
+      "Todos dibujan la palabra al mismo tiempo antes de que se acabe el tiempo. ¡Sin letras ni números!",
+      "El juez ve los dibujos sin nombres e intenta adivinar la palabra.",
+      "Luego el juez corona ⭐ el mejor o el más chistoso.",
+      "El papel de juez pasa al siguiente jugador en cada ronda.",
+      "😈 Saboteador (opcional): un jugador dibuja en secreto la tarjeta de otra persona además de la suya. Esa persona queda bloqueada, ve en vivo cómo dibujan su tarjeta e intenta adivinar quién es el saboteador.",
+      "🃏 El diferente (opcional): un jugador recibe en secreto otra palabra… ¡y no lo sabe!",
+    ],
+    scoring: "Puntos: si adivinan la palabra → +1 a cada dibujante y +2 al juez · Dibujo coronado +1 (a quien lo dibujó de verdad) · Saboteador: el jugador bloqueado +1 si adivina quién fue, si no, el saboteador +1 · El diferente +1 si el juez adivina su palabra.",
+    resumeHost: "Seguir siendo anfitrión de {code}", resumeJoin: "Volver a la sala {code}", forget: "Olvidar",
+    connecting: "Conectando…", findingRoom: "Buscando la sala {code}…",
+    lobby: "Esperando jugadores", shareHint: "Escanea para entrar, o abre esta página y escribe el código.",
+    copyLink: "Copiar enlace", share: "Compartir enlace", linkCopied: "Enlace copiado",
+    players: "Jugadores", need3: "Necesitan al menos 3 jugadores.", start: "Empezar",
+    waitHost: "Esperando a que el anfitrión empiece…",
+    settings: "Ajustes", category: "Palabras", mix: "De todo un poco (sin 18+)", custom: "Mis propias palabras",
+    customHint: "Escribe palabras separadas por comas o en líneas nuevas (mejor 8 o más).",
+    customN: "{n} palabras propias", drawTime: "Tiempo", rounds: "Rondas",
+    lapsHint: "👑×1 = todos son juez una vez, 👑×2 = dos veces.",
+    hint: "El juez ve la categoría", on: "Sí", off: "No", language: "Idioma",
+    guessMode: "El juez adivina", gmType: "⌨️ Escribiendo", gmPick: "🔢 Eligiendo entre 8",
+    gmHint: "Escribiendo tiene 2 intentos y perdona errores pequeños. Eligiendo es más fácil.",
+    you: "tú", round: "Ronda {n}", roundOf: "Ronda {n} de {m}",
+    holdSecret: "Mantén presionado para ver tu secreto 👆", holdPeek: "👁 Mantén presionado para ver tu palabra",
+    secretWord: "Tu palabra secreta", category2: "Categoría: {c}", noCat: "¡Esta vez sin pista!",
+    youJudge: "👑 Eres el JUEZ",
+    judgeTip: "Relájate mientras todos dibujan. Luego adivina la palabra con sus dibujos y corona tu favorito.",
+    drawTip: "¡Dibújala! Sin letras ni números. El juez tiene que adivinarla.",
+    youSab: "😈 Eres el SABOTEADOR",
+    sabTip: "Dibuja tu tarjeta Y en secreto también la de {name}. Cambia entre las dos con las pestañas. ¡Que no te descubran!",
+    youLocked: "🔒 ¡Estás bloqueado!",
+    lockedTip: "Alguien está dibujando en secreto TU tarjeta esta ronda. Mírala aparecer en vivo y descubre quién es.",
+    ready: "Estoy listo", readyWait: "Esperando a todos… ({n}/{m} listos)", startDrawing: "Empezar a dibujar ya",
+    gettingSecret: "Recibiendo tu secreto…",
+    drawThis: "Dibuja: {w}", yourCard: "Tu tarjeta", forName: "Tarjeta de {name}",
+    done: "Listo ✓", timesUp: "¡Se acabó el tiempo!", doneN: "{n}/{m} listos",
+    judgeWait: "Todos están dibujando… ¡prepárate para adivinar!", watchWait: "Todos están dibujando…",
+    lockedWatch: "🔒 Alguien está dibujando TU tarjeta:", lockedMuted: "Mira bien… ¿de quién es ese estilo?",
+    passNow: "🔄 ¡Termina el dibujo de {name}!", passWait: "🔄 Pasando los dibujos…", passLeg: "Parte {n}/2",
+    tools: { pen: "Lápiz", fill: "Rellenar", eraser: "Borrador", undo: "Deshacer", clear: "Borrar todo" },
+    guessYou: "👑 ¿Cuál es la palabra?", guessOther: "👑 {name} está adivinando…", noHelp: "🤐 ¡Nada de ayudar!",
+    guessPh: "Escribe tu respuesta", guessBtn: "Adivinar", lastTry: "¡No! Un intento más.", triesLeft: "Intentos: {n}",
+    gotIt: "¡{name} la adivinó! ✅", missed: "{name} no la adivinó ❌", wordWas: "La palabra era",
+    overruled: "✓ El anfitrión dio la respuesta por buena",
+    pickYou: "⭐ ¡Corona el mejor o el más chistoso!", pickOther: "⭐ {name} está eligiendo su favorito…", crown: "⭐ Coronar",
+    accuseTitle: "🔒 ¿Quién dibujó tu tarjeta?", accuseSub: "Elige quién crees que la dibujó en secreto.", accusePicked: "Elegiste a {name}",
+    accuseWait: "🔒 Esperando a que el jugador bloqueado diga quién fue el saboteador…",
+    countIt: "✓ Dar la respuesta por buena", revealNow: "Ver resultados ya",
+    cardN: "Tarjeta {l}", emptyCard: "sin dibujo",
+    favWas: "⭐ ¡Coronaron el dibujo de {name}!", favBy: "…¡pero en realidad lo dibujó {name}! 😈", noFav: "Esta vez no coronaron ningún dibujo.",
+    allCards: "De quién era cada dibujo",
+    drawnBy: "lo dibujó {name}", drawnBy2: "lo empezó {a}, lo terminó {b}",
+    oddWas: "🃏 El diferente: ¡{name} tenía en secreto “{w}”!", oddFooled: "…¡y el juez la adivinó! +1 para {name}",
+    sabWas: "😈 ¡{sab} dibujó en secreto la tarjeta de {victim}!", accRight: "¡{victim} lo descubrió! 🎯 +1", accWrong: "{victim} dijo {to}: ¡error! +1 para {sab}",
+    accNone: "{victim} no eligió a nadie. +1 para {sab}",
+    judgeTries: "Las respuestas del juez",
+    scores: "Puntos", nextRound: "Siguiente ronda ▶", finalResults: "Resultados finales 🏆", endGame: "Terminar juego",
+    waitNext: "Esperando al anfitrión…", gameOver: "¡Fin del juego!", playAgain: "Jugar otra vez", winner: "¡Gana {name}!", tie2: "¡Empate!",
+    menu: "Menú", skipRound: "Saltar esta ronda (sin puntos)", leave: "Salir del juego",
+    leaveConfirm: "¿Salir de esta partida?", endConfirm: "¿Terminar el juego ahora y ver los puntos finales?",
+    removeConfirm: "¿Sacar a {name} del juego?", removed: "Te sacaron del juego.",
+    full: "Esta sala está llena (12 jugadores).", hostBack: "Reconectando con el anfitrión…",
+    newPlayer: "Entraste a mitad de ronda: jugarás en la siguiente. ¡Disfruta el show!",
+    close: "Cerrar", sound: "Sonido",
+    relayNote: "Cada teléfono necesita internet. Los dibujos y nombres pasan por un servidor público gratuito.",
+    nameTaken: "Escribe un nombre", hostFallback: "Probando otro servidor…",
+    modes: "Modos de juego", cats: "Categorías", twist: "Giro",
+    twists: { none: "🎨 Normal", blind: "🙈 Dibujo a ciegas", oneline: "✍️ Una sola línea", speed: "⚡ Rápido (30s)", pass: "🔄 Pásalo", random: "🎲 Al azar cada ronda" },
+    twistDesc: { none: "Sin giro esta ronda. ¡Dibuja normal!", blind: "¡No puedes ver tu propio dibujo mientras dibujas!", oneline: "Un solo trazo: cuando levantes el dedo, ¡terminaste!",
+      speed: "¡Solo 30 segundos para dibujar!", pass: "¡A la mitad, tu dibujo pasa a otra persona para que lo termine!" },
+    twistNow: "Giro de esta ronda: {t}", blindCover: "🙈 ¡Dibujando a ciegas!", oneLineTip: "✍️ Un solo trazo: ¡no levantes el dedo!",
+    sab: "Saboteador", sabHint: "Un jugador dibuja en secreto también la tarjeta de otro (4+ jugadores). No se usa en las rondas de Pásalo.",
+    odd: "El diferente", oddHint: "Un jugador recibe en secreto otra palabra y no lo sabe (4+ jugadores).",
+    adultNote: "🔞 Las palabras de Después de medianoche son solo para adultos.",
+    aborted: "Ronda cancelada", abortJudge: "El juez salió del juego.", abortFew: "No quedan suficientes jugadores.",
+    customCat: "Propias", normalMode: "Normal (clásico)", judgeIs: "👑 Juez: {name}",
+  },
+};
+let LANG = (navigator.language || "en").toLowerCase().startsWith("es") ? "es" : "en";
+function t(k, v) {
+  let s = (T[LANG] && T[LANG][k]) ?? T.en[k] ?? k;
+  if (v && typeof s === "string") s = s.replace(/\{(\w+)\}/g, (_, n) => v[n] ?? "");
+  return s;
+}
+
+// ---------------------------------------------------------------------
+//  Word packs: [english, spanish]
+// ---------------------------------------------------------------------
+const CATS = [
+  { id: "animals", e: "🐾", en: "Animals", es: "Animales", w: [
+    ["dog","perro"],["cat","gato"],["elephant","elefante"],["giraffe","jirafa"],["penguin","pingüino"],["shark","tiburón"],
+    ["octopus","pulpo"],["snake","serpiente"],["owl","búho"],["monkey","mono"],["lion","león"],["rabbit","conejo"],
+    ["turtle","tortuga"],["frog","rana"],["bee","abeja"],["spider","araña"],["horse","caballo"],["cow","vaca"],
+    ["pig","cerdo"],["chicken","gallina"],["duck","pato"],["dolphin","delfín"],["whale","ballena"],["butterfly","mariposa"],
+    ["snail","caracol"],["crab","cangrejo"],["bat","murciélago"],["kangaroo","canguro"],["zebra","cebra"],["camel","camello"]]},
+  { id: "food", e: "🍕", en: "Food", es: "Comida", w: [
+    ["pizza","pizza"],["hamburger","hamburguesa"],["taco","taco"],["ice cream","helado"],["banana","plátano"],["apple","manzana"],
+    ["watermelon","sandía"],["spaghetti","espaguetis"],["popcorn","palomitas"],["hot dog","perro caliente"],["sushi","sushi"],
+    ["birthday cake","pastel de cumpleaños"],["egg","huevo"],["cheese","queso"],["bread","pan"],["carrot","zanahoria"],
+    ["corn","maíz"],["cookie","galleta"],["donut","dona"],["pineapple","piña"],["strawberry","fresa"],["grapes","uvas"],
+    ["french fries","papas fritas"],["sandwich","sándwich"],["soup","sopa"],["chocolate","chocolate"],["coffee","café"],
+    ["pancakes","panqueques"],["avocado","aguacate"],["chili pepper","chile"]]},
+  { id: "home", e: "🏠", en: "Around the house", es: "En la casa", w: [
+    ["bed","cama"],["toilet","inodoro"],["bathtub","bañera"],["sofa","sofá"],["television","televisión"],["refrigerator","refrigerador"],
+    ["lamp","lámpara"],["clock","reloj"],["door","puerta"],["window","ventana"],["stairs","escaleras"],["mirror","espejo"],
+    ["umbrella","paraguas"],["toothbrush","cepillo de dientes"],["washing machine","lavadora"],["oven","horno"],["chair","silla"],
+    ["key","llave"],["candle","vela"],["pillow","almohada"],["broom","escoba"],["trash can","bote de basura"],["plant","planta"],
+    ["phone","teléfono"],["computer","computadora"]]},
+  { id: "places", e: "🗺️", en: "Places", es: "Lugares", w: [
+    ["beach","playa"],["school","escuela"],["hospital","hospital"],["airport","aeropuerto"],["zoo","zoológico"],["farm","granja"],
+    ["castle","castillo"],["jungle","selva"],["desert","desierto"],["volcano","volcán"],["library","biblioteca"],
+    ["supermarket","supermercado"],["restaurant","restaurante"],["park","parque"],["campsite","campamento"],["outer space","espacio"],
+    ["circus","circo"],["swimming pool","piscina"],["movie theater","cine"],["church","iglesia"],["island","isla"],
+    ["mountain","montaña"],["city","ciudad"],["gym","gimnasio"],["museum","museo"]]},
+  { id: "jobs", e: "👩‍🚒", en: "Jobs", es: "Profesiones", w: [
+    ["doctor","médico"],["firefighter","bombero"],["police officer","policía"],["chef","chef"],["teacher","maestro"],
+    ["astronaut","astronauta"],["pilot","piloto"],["farmer","granjero"],["dentist","dentista"],["pirate","pirata"],
+    ["clown","payaso"],["painter","pintor"],["musician","músico"],["mechanic","mecánico"],["builder","albañil"],
+    ["scientist","científico"],["nurse","enfermero"],["mail carrier","cartero"],["magician","mago"],["lifeguard","salvavidas"],
+    ["hairdresser","peluquero"],["photographer","fotógrafo"],["soccer player","futbolista"],["waiter","mesero"],["baker","panadero"]]},
+  { id: "sports", e: "⚽", en: "Sports & hobbies", es: "Deportes y pasatiempos", w: [
+    ["soccer","fútbol"],["basketball","baloncesto"],["baseball","béisbol"],["tennis","tenis"],["swimming","natación"],
+    ["skiing","esquí"],["surfing","surf"],["bowling","boliche"],["golf","golf"],["boxing","boxeo"],["cycling","ciclismo"],
+    ["skateboarding","patineta"],["fishing","pesca"],["dancing","baile"],["karate","karate"],["chess","ajedrez"],
+    ["video games","videojuegos"],["painting","pintura"],["gardening","jardinería"],["cooking","cocinar"],["reading","lectura"],
+    ["guitar","guitarra"],["piano","piano"],["yoga","yoga"],["volleyball","voleibol"]]},
+  { id: "nature", e: "🌈", en: "Nature & weather", es: "Naturaleza y clima", w: [
+    ["sun","sol"],["moon","luna"],["rain","lluvia"],["snow","nieve"],["rainbow","arcoíris"],["tornado","tornado"],
+    ["lightning","rayo"],["cloud","nube"],["tree","árbol"],["flower","flor"],["cactus","cactus"],["mushroom","hongo"],
+    ["river","río"],["waterfall","cascada"],["ocean","océano"],["star","estrella"],["fire","fuego"],["leaf","hoja"],
+    ["wind","viento"],["earthquake","terremoto"],["snowman","muñeco de nieve"],["cave","cueva"],["sunset","atardecer"],
+    ["iceberg","iceberg"],["palm tree","palmera"]]},
+  { id: "transport", e: "🚀", en: "Things that move", es: "Transportes", w: [
+    ["car","carro"],["bus","autobús"],["train","tren"],["airplane","avión"],["helicopter","helicóptero"],["bicycle","bicicleta"],
+    ["motorcycle","motocicleta"],["boat","barco"],["submarine","submarino"],["rocket","cohete"],["tractor","tractor"],
+    ["ambulance","ambulancia"],["fire truck","camión de bomberos"],["taxi","taxi"],["hot air balloon","globo aerostático"],
+    ["scooter","patinete"],["sailboat","velero"],["police car","patrulla"],["school bus","autobús escolar"],["limousine","limusina"],
+    ["canoe","canoa"],["cable car","teleférico"],["truck","camión"],["spaceship","nave espacial"],["roller coaster","montaña rusa"]]},
+  { id: "clothes", e: "👕", en: "Clothes & stuff", es: "Ropa y accesorios", w: [
+    ["hat","sombrero"],["shoes","zapatos"],["socks","calcetines"],["glasses","lentes"],["sunglasses","lentes de sol"],
+    ["t-shirt","camiseta"],["dress","vestido"],["pants","pantalones"],["jacket","chaqueta"],["scarf","bufanda"],["gloves","guantes"],
+    ["boots","botas"],["tie","corbata"],["crown","corona"],["backpack","mochila"],["wristwatch","reloj de pulsera"],["ring","anillo"],
+    ["necklace","collar"],["pajamas","pijama"],["swimsuit","traje de baño"],["raincoat","impermeable"],["belt","cinturón"],
+    ["cap","gorra"],["mask","máscara"],["costume","disfraz"]]},
+  { id: "spooky", e: "👻", en: "Spooky & fantasy", es: "Terror y fantasía", w: [
+    ["ghost","fantasma"],["vampire","vampiro"],["witch","bruja"],["zombie","zombi"],["mummy","momia"],["skeleton","esqueleto"],
+    ["pumpkin","calabaza"],["dragon","dragón"],["unicorn","unicornio"],["mermaid","sirena"],["robot","robot"],["alien","extraterrestre"],
+    ["wizard","hechicero"],["monster","monstruo"],["werewolf","hombre lobo"],["superhero","superhéroe"],["fairy","hada"],
+    ["giant","gigante"],["treasure","tesoro"],["spider web","telaraña"],["cauldron","caldero"],["haunted house","casa embrujada"],
+    ["tombstone","lápida"],["black cat","gato negro"],["candy","dulces"],["crystal ball","bola de cristal"],["knight","caballero"],
+    ["princess","princesa"],["ninja","ninja"]]},
+];
+// Game modes: themed word sets, split into groups (the group is the category hint).
+const MODES = [
+  { id: "easy", e: "🟢", en: "Easy (simple words)", es: "Fácil (palabras sencillas)", g: [
+    { en: "Animals", es: "Animales", w: [["cat","gato"],["dog","perro"],["fish","pez"],["bird","pájaro"],["duck","pato"],["cow","vaca"],["pig","cerdo"],["bee","abeja"],["snake","serpiente"],["frog","rana"]] },
+    { en: "Food", es: "Comida", w: [["apple","manzana"],["banana","plátano"],["pizza","pizza"],["cake","pastel"],["egg","huevo"],["ice cream","helado"],["cookie","galleta"],["carrot","zanahoria"],["cheese","queso"],["bread","pan"]] },
+    { en: "Things", es: "Cosas", w: [["ball","pelota"],["hat","sombrero"],["shoe","zapato"],["cup","taza"],["key","llave"],["book","libro"],["chair","silla"],["clock","reloj"],["umbrella","paraguas"],["glasses","lentes"]] },
+    { en: "Outside", es: "Afuera", w: [["sun","sol"],["moon","luna"],["star","estrella"],["tree","árbol"],["flower","flor"],["cloud","nube"],["rain","lluvia"],["house","casa"],["car","carro"],["boat","barco"]] },
+  ]},
+  { id: "kids", e: "🧸", en: "Kids", es: "Niños", g: [
+    { en: "Toys & play", es: "Juguetes y juegos", w: [["teddy bear","osito de peluche"],["balloon","globo"],["kite","papalote"],["building blocks","bloques"],["slide","resbaladilla"],["swing","columpio"],["trampoline","trampolín"],["bouncy castle","castillo inflable"],["crayons","crayones"],["yo-yo","yoyo"]] },
+    { en: "Pretend & magic", es: "Fantasía y magia", w: [["unicorn","unicornio"],["dinosaur","dinosaurio"],["magic wand","varita mágica"],["tooth fairy","hada de los dientes"],["pirate ship","barco pirata"],["treasure map","mapa del tesoro"],["monster under the bed","monstruo debajo de la cama"],["superhero cape","capa de superhéroe"],["castle","castillo"],["dragon","dragón"]] },
+    { en: "My day", es: "Mi día", w: [["bubble bath","baño de burbujas"],["bedtime story","cuento antes de dormir"],["school bus","autobús escolar"],["lunch box","lonchera"],["backpack","mochila"],["birthday party","fiesta de cumpleaños"],["piggy bank","alcancía"],["sandbox","arenero"],["ice cream truck","camión de helados"],["pajamas","pijama"]] },
+    { en: "Animal friends", es: "Amigos animales", w: [["puppy","perrito"],["kitten","gatito"],["bunny","conejito"],["penguin","pingüino"],["giraffe","jirafa"],["monkey","mono"],["elephant","elefante"],["butterfly","mariposa"],["ladybug","catarina"],["jellyfish","medusa"]] },
+  ]},
+  { id: "hard", e: "🔴", en: "Hard (tricky ideas)", es: "Difícil (ideas complicadas)", g: [
+    { en: "Feelings & ideas", es: "Sentimientos e ideas", w: [["nostalgia","nostalgia"],["jealousy","celos"],["freedom","libertad"],["friendship","amistad"],["sarcasm","sarcasmo"],["karma","karma"],["procrastination","procrastinación"],["peer pressure","presión de grupo"],["homesickness","extrañar el hogar"],["déjà vu","déjà vu"]] },
+    { en: "Science", es: "Ciencia", w: [["gravity","gravedad"],["evolution","evolución"],["photosynthesis","fotosíntesis"],["black hole","agujero negro"],["electricity","electricidad"],["eclipse","eclipse"],["echo","eco"],["magnetism","magnetismo"],["artificial intelligence","inteligencia artificial"],["time travel","viaje en el tiempo"]] },
+    { en: "Society", es: "Sociedad", w: [["democracy","democracia"],["inflation","inflación"],["stock market","bolsa de valores"],["social media","redes sociales"],["global warming","calentamiento global"],["recycling","reciclaje"],["conspiracy theory","teoría de conspiración"],["revolution","revolución"],["identity theft","robo de identidad"],["gossip","chisme"]] },
+    { en: "Life moments", es: "Momentos de la vida", w: [["midlife crisis","crisis de los 40"],["jet lag","jet lag"],["insomnia","insomnio"],["traffic jam","embotellamiento"],["job interview","entrevista de trabajo"],["multitasking","multitarea"],["plot twist","giro inesperado"],["vertigo","vértigo"],["hypnosis","hipnosis"],["first day of school","primer día de clases"]] },
+  ]},
+  { id: "afterdark", e: "🔞", en: "After Dark (18+)", es: "Después de medianoche (18+)", adult: true, g: [
+    { en: "Night out", es: "Noche de fiesta", w: [["hangover","resaca"],["tequila shot","shot de tequila"],["last call","última ronda"],["bouncer","cadenero"],["beer pong","beer pong"],["karaoke night","noche de karaoke"],["drunk text","mensaje borracho"],["walk of shame","camino de la vergüenza"],["after party","after"],["bartender","bartender"]] },
+    { en: "Dating", es: "Citas", w: [["first date","primera cita"],["dating app","app de citas"],["speed dating","citas rápidas"],["breakup text","mensaje de ruptura"],["crush","amor platónico"],["booty call","llamada de madrugada"],["the ex","el ex"],["cheating","infidelidad"],["flirting","coqueteo"],["French kiss","beso francés"]] },
+    { en: "Party games", es: "Juegos de fiesta", w: [["spin the bottle","la botella"],["truth or dare","verdad o reto"],["strip poker","póker de prendas"],["body shot","shot en el cuerpo"],["lap dance","baile privado"],["pole dancing","baile en tubo"],["bachelor party","despedida de soltero"],["Vegas wedding","boda en Las Vegas"],["hot tub","jacuzzi"],["skinny dipping","nadar desnudos"]] },
+    { en: "Bedroom & beyond", es: "La recámara y más", w: [["lingerie","lencería"],["handcuffs","esposas"],["whipped cream","crema batida"],["massage","masaje"],["honeymoon","luna de miel"],["wedding night","noche de bodas"],["morning after","la mañana siguiente"],["hickey","chupetón"],["nude beach","playa nudista"],["love handles","llantitas"]] },
+  ]},
+];
+// Every word set in one place: { id, e, en, es, kind, words:[{en, es, hen, hes}] }  (hen/hes = category hint)
+const PACKS = {};
+for (const c of CATS) PACKS[c.id] = { id: c.id, e: c.e, en: c.en, es: c.es, kind: "cat", words: c.w.map(([en, es]) => ({ en, es, hen: c.en, hes: c.es })) };
+for (const m of MODES) PACKS[m.id] = { id: m.id, e: m.e, en: m.en, es: m.es, kind: "mode", adult: !!m.adult,
+  words: m.g.flatMap((g) => g.w.map(([en, es]) => ({ en, es, hen: g.en, hes: g.es }))) };
+// 🎨 Normal = all 10 everyday categories.  🎲 Mix = Normal + Easy + Kids + Hard (never 18+).
+const NORMAL_IDS = CATS.map((c) => c.id);
+const MIX_IDS = [...NORMAL_IDS, "easy", "kids", "hard"];
+const packIds = (cat) => cat === "normal" ? NORMAL_IDS : cat === "mix" ? MIX_IDS : PACKS[cat] ? [cat] : NORMAL_IDS;
+const packLabel = (id) => id === "normal" ? "🎨 " + t("normalMode") : id === "mix" ? "🎲 " + t("mix") : id === "custom" ? "✏️ " + t("custom") : PACKS[id] ? PACKS[id].e + " " + PACKS[id][LANG] : id;
+const TWISTS = ["none", "blind", "oneline", "speed", "pass", "random"];
+const RANDOM_TWISTS = ["none", "blind", "oneline", "speed", "pass"];
+const cap = (s) => s ? s.charAt(0).toLocaleUpperCase() + s.slice(1) : s;
+const LETTERS = "ABCDEFGHIJKL";
+
+// Guess checking: forgiving about case, accents, articles, plurals and small typos.
+const ARTICLES = /\b(the|a|an|el|la|los|las|un|una|unos|unas)\b/g;
+function normWord(s) {
+  return (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9 ]+/g, " ").replace(ARTICLES, " ").replace(/\s+/g, "");
+}
+function lev(a, b) {
+  if (a === b) return 0;
+  const m = a.length, n = b.length; if (!m || !n) return m + n;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[n];
+}
+function guessMatches(guess, targets) {
+  const g = normWord(guess);
+  if (!g) return false;
+  for (const tg of targets || []) {
+    const w = normWord(tg);
+    if (!w) continue;
+    if (g === w) return true;
+    const sg = g.replace(/(es|s)$/, ""), sw = w.replace(/(es|s)$/, "");
+    if (sg && sg === sw) return true;
+    if (lev(g, w) <= (w.length >= 8 ? 2 : w.length >= 4 ? 1 : 0)) return true;
+  }
+  return false;
+}
+
+// ---------------------------------------------------------------------
+//  Small helpers
+// ---------------------------------------------------------------------
+const $ = (s, r = document) => r.querySelector(s);
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "style") e.style.cssText = v;
+    else if (k === "html") e.innerHTML = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat(Infinity)) {
+    if (c == null || c === false) continue;
+    e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  return e;
+}
+const rid = (n) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (b) => b.toString(16).padStart(2, "0")).join("");
+const rnd = (n) => Math.floor(Math.random() * n);
+const pick = (a) => a[rnd(a.length)];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const now = () => Date.now();
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+function toast(msg) {
+  document.querySelector(".toast")?.remove();
+  const e = el("div", { class: "toast" }, msg);
+  document.body.append(e);
+  setTimeout(() => e.remove(), 2400);
+}
+const COLORS = ["#ff5a3c","#14a68c","#7b4dff","#f29d00","#2f7de0","#e0458c","#4f9d2d","#8a5a2b","#00a3c4","#c0392b","#6c5ce7","#d35400"];
+const avatar = (p, extra = "") => el("span", { class: "av " + extra, style: `background:${p ? COLORS[p.col % COLORS.length] : "#999"}` }, p ? (p.name || "?").trim().charAt(0).toUpperCase() : "?");
+
+// ---------------------------------------------------------------------
+//  Sound + vibration + keep screen awake
+// ---------------------------------------------------------------------
+let audioCtx = null, muted = !!store.get("dj_mute");
+function beep(freq = 660, dur = 0.12, vol = 0.15) {
+  if (muted) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = freq; o.type = "triangle";
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    o.connect(g).connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + dur);
+  } catch {}
+}
+const buzz = (ms) => { try { navigator.vibrate?.(ms); } catch {} };
+document.addEventListener("pointerdown", () => { try { audioCtx?.state === "suspended" && audioCtx.resume(); } catch {} }, { passive: true });
+let wakeLock = null;
+async function keepAwake() {
+  try { if (!wakeLock && navigator.wakeLock) { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => (wakeLock = null)); } } catch {}
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && C.code) keepAwake(); });
+
+// ---------------------------------------------------------------------
+//  QR code (byte mode, error correction M, versions 1–10)
+// ---------------------------------------------------------------------
+const QR = (() => {
+  const EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  for (let i = 0, x = 1; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 256) x ^= 0x11d; }
+  for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  const mul = (a, b) => (a && b ? EXP[LOG[a] + LOG[b]] : 0);
+  function gen(n) {
+    let g = [1];
+    for (let i = 0; i < n; i++) {
+      const ng = new Array(g.length + 1).fill(0);
+      for (let j = 0; j < g.length; j++) { ng[j] ^= g[j]; ng[j + 1] ^= mul(g[j], EXP[i]); }
+      g = ng;
+    }
+    return g;
+  }
+  function ecc(data, n) {
+    const g = gen(n), r = new Array(n).fill(0);
+    for (const d of data) {
+      const f = d ^ r.shift(); r.push(0);
+      for (let j = 0; j < n; j++) r[j] ^= mul(g[j + 1], f);
+    }
+    return r;
+  }
+  const EC = [null, [10, [[1, 16]]], [16, [[1, 28]]], [26, [[1, 44]]], [18, [[2, 32]]], [24, [[2, 43]]], [16, [[4, 27]]],
+    [18, [[4, 31]]], [22, [[2, 38], [2, 39]]], [22, [[3, 36], [2, 37]]], [26, [[4, 43], [1, 44]]]];
+  const ALIGN = [null, [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50]];
+  const MASK = [(r, c) => (r + c) % 2 === 0, (r) => r % 2 === 0, (r, c) => c % 3 === 0, (r, c) => (r + c) % 3 === 0,
+    (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0, (r, c) => ((r * c) % 2) + ((r * c) % 3) === 0,
+    (r, c) => (((r * c) % 2) + ((r * c) % 3)) % 2 === 0, (r, c) => (((r + c) % 2) + ((r * c) % 3)) % 2 === 0];
+
+  function penalty(G) {
+    const N = G.length; let p = 0;
+    const at = (a, b, tr) => (tr ? G[b][a] : G[a][b]);
+    for (let tr = 0; tr < 2; tr++) for (let a = 0; a < N; a++) {
+      let run = 1;
+      for (let b = 1; b <= N; b++) {
+        if (b < N && at(a, b, tr) === at(a, b - 1, tr)) run++;
+        else { if (run >= 5) p += run - 2; run = 1; }
+      }
+      for (let b = 0; b + 11 <= N; b++) {
+        let m1 = true, m2 = true;
+        const P1 = [1,0,1,1,1,0,1,0,0,0,0], P2 = [0,0,0,0,1,0,1,1,1,0,1];
+        for (let k = 0; k < 11; k++) { const v = at(a, b + k, tr) ? 1 : 0; if (v !== P1[k]) m1 = false; if (v !== P2[k]) m2 = false; }
+        if (m1) p += 40; if (m2) p += 40;
+      }
+    }
+    for (let r = 0; r < N - 1; r++) for (let c = 0; c < N - 1; c++) {
+      const v = G[r][c]; if (v === G[r + 1][c] && v === G[r][c + 1] && v === G[r + 1][c + 1]) p += 3;
+    }
+    let dark = 0; for (const row of G) for (const v of row) if (v) dark++;
+    p += Math.floor(Math.abs((dark * 20) / (N * N) - 10)) * 10;
+    return p;
+  }
+
+  function make(text) {
+    const bytes = [...new TextEncoder().encode(text)];
+    let ver = 1, dataCw = 0;
+    for (; ver <= 10; ver++) {
+      dataCw = EC[ver][1].reduce((s, [c, n]) => s + c * n, 0);
+      if (4 + (ver < 10 ? 8 : 16) + bytes.length * 8 <= dataCw * 8) break;
+    }
+    if (ver > 10) throw new Error("QR text too long");
+    const cb = ver < 10 ? 8 : 16, bits = [];
+    const put = (v, n) => { for (let i = n - 1; i >= 0; i--) bits.push((v >> i) & 1); };
+    put(4, 4); put(bytes.length, cb); for (const b of bytes) put(b, 8);
+    put(0, Math.min(4, dataCw * 8 - bits.length));
+    while (bits.length % 8) bits.push(0);
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) { let v = 0; for (let j = 0; j < 8; j++) v = (v << 1) | bits[i + j]; data.push(v); }
+    for (let pad = 0; data.length < dataCw; pad ^= 1) data.push(pad ? 0x11 : 0xec);
+    const [ecn, groups] = EC[ver], blocks = [];
+    let off = 0;
+    for (const [cnt, n] of groups) for (let i = 0; i < cnt; i++) { const d = data.slice(off, off + n); off += n; blocks.push({ d, e: ecc(d, ecn) }); }
+    const out = [], maxD = Math.max(...blocks.map((b) => b.d.length));
+    for (let i = 0; i < maxD; i++) for (const b of blocks) if (i < b.d.length) out.push(b.d[i]);
+    for (let i = 0; i < ecn; i++) for (const b of blocks) out.push(b.e[i]);
+
+    const N = 17 + 4 * ver;
+    const M = [...Array(N)].map(() => new Array(N).fill(false));
+    const F = [...Array(N)].map(() => new Array(N).fill(false));
+    const set = (r, c, v) => { M[r][c] = !!v; F[r][c] = true; };
+    const finder = (r0, c0) => {
+      for (let i = -1; i <= 7; i++) for (let j = -1; j <= 7; j++) {
+        const r = r0 + i, c = c0 + j;
+        if (r < 0 || c < 0 || r >= N || c >= N) continue;
+        const inside = i >= 0 && i <= 6 && j >= 0 && j <= 6;
+        set(r, c, inside && (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4)));
+      }
+    };
+    finder(0, 0); finder(0, N - 7); finder(N - 7, 0);
+    for (let i = 0; i < N; i++) { if (!F[6][i]) set(6, i, i % 2 === 0); if (!F[i][6]) set(i, 6, i % 2 === 0); }
+    const al = ALIGN[ver];
+    for (const r of al) for (const c of al) {
+      if ((r < 9 && c < 9) || (r < 9 && c > N - 10) || (r > N - 10 && c < 9)) continue;
+      for (let i = -2; i <= 2; i++) for (let j = -2; j <= 2; j++) set(r + i, c + j, Math.max(Math.abs(i), Math.abs(j)) !== 1);
+    }
+    for (let i = 0; i < 9; i++) { F[8][i] = F[i][8] = true; }
+    for (let i = 0; i < 8; i++) { F[8][N - 1 - i] = true; F[N - 1 - i][8] = true; }
+    if (ver >= 7) for (let i = 0; i < 6; i++) for (let j = 0; j < 3; j++) { F[i][N - 11 + j] = true; F[N - 11 + j][i] = true; }
+    let bi = 0; const total = out.length * 8;
+    for (let right = N - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < N; vert++) for (let j = 0; j < 2; j++) {
+        const c = right - j, up = ((right + 1) & 2) === 0, r = up ? N - 1 - vert : vert;
+        if (F[r][c]) continue;
+        let v = false;
+        if (bi < total) { v = ((out[bi >> 3] >> (7 - (bi & 7))) & 1) === 1; bi++; }
+        M[r][c] = v;
+      }
+    }
+    const drawFormat = (G, mask) => {
+      const data5 = (0 << 3) | mask; // EC level M = 00
+      let rem = data5;
+      for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >> 9) * 0x537);
+      const b = ((data5 << 10) | rem) ^ 0x5412, bit = (i) => ((b >> i) & 1) === 1;
+      for (let i = 0; i <= 5; i++) G[i][8] = bit(i);
+      G[7][8] = bit(6); G[8][8] = bit(7); G[8][7] = bit(8);
+      for (let i = 9; i < 15; i++) G[8][14 - i] = bit(i);
+      for (let i = 0; i < 8; i++) G[8][N - 1 - i] = bit(i);
+      for (let i = 8; i < 15; i++) G[N - 15 + i][8] = bit(i);
+      G[N - 8][8] = true;
+      if (ver >= 7) {
+        let r2 = ver;
+        for (let i = 0; i < 12; i++) r2 = (r2 << 1) ^ ((r2 >> 11) * 0x1f25);
+        const vb = (ver << 12) | r2;
+        for (let i = 0; i < 18; i++) {
+          const v = ((vb >> i) & 1) === 1, a = N - 11 + (i % 3), bb = Math.floor(i / 3);
+          G[bb][a] = v; G[a][bb] = v;
+        }
+      }
+    };
+    let best = null, bestP = Infinity;
+    for (let m = 0; m < 8; m++) {
+      const G = M.map((row, r) => row.map((v, c) => (F[r][c] ? v : v !== MASK[m](r, c))));
+      drawFormat(G, m);
+      const p = penalty(G);
+      if (p < bestP) { bestP = p; best = G; }
+    }
+    return best;
+  }
+  function svg(text) {
+    const G = make(text), N = G.length, q = 4, S = N + q * 2;
+    let d = "";
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (G[r][c]) d += `M${c + q} ${r + q}h1v1h-1z`;
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" shape-rendering="crispEdges"><rect width="${S}" height="${S}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+  }
+  return { make, svg };
+})();
+
+// ---------------------------------------------------------------------
+//  Minimal MQTT 3.1.1 client over WebSocket (QoS 0 publish/subscribe)
+// ---------------------------------------------------------------------
+function relay(url, { onMessage, onStatus }) {
+  const enc = new TextEncoder(), dec = new TextDecoder();
+  const subs = new Set();
+  let ws = null, buf = new Uint8Array(0), up = false, closed = false, tries = 0, pingT = 0, connT = 0, pid = 1;
+  const cat = (...parts) => { const n = parts.reduce((s, p) => s + p.length, 0), o = new Uint8Array(n); let i = 0; for (const p of parts) { o.set(p, i); i += p.length; } return o; };
+  const str = (s) => { const b = enc.encode(s); return cat([b.length >> 8, b.length & 255], b); };
+  const varlen = (n) => { const o = []; do { let d = n % 128; n = Math.floor(n / 128); if (n > 0) d |= 128; o.push(d); } while (n > 0); return o; };
+  const packet = (h, body) => cat([h, ...varlen(body.length)], body);
+  const send = (p) => { try { if (ws && ws.readyState === 1) ws.send(p); } catch {} };
+  const sendSub = (topic) => { pid = (pid % 65000) + 1; send(packet(0x82, cat([pid >> 8, pid & 255], str(topic), [0]))); };
+  const setUp = (v) => { if (up === v) return; up = v; onStatus?.(v); };
+
+  function connect() {
+    if (closed) return;
+    clearTimeout(connT);
+    try { ws = new WebSocket(url, ["mqtt"]); } catch { return retry(); }
+    ws.binaryType = "arraybuffer";
+    const me = ws;
+    connT = setTimeout(() => { if (ws === me && !up) { try { me.close(); } catch {} } }, 8000);
+    ws.onopen = () => {
+      const cid = "dj" + rid(8);
+      send(packet(0x10, cat(str("MQTT"), [4, 0x02, 0, 30], str(cid))));
+    };
+    ws.onmessage = (ev) => { buf = cat(buf, new Uint8Array(ev.data)); parse(); };
+    ws.onclose = ws.onerror = () => {
+      if (ws !== me) return;
+      ws = null; clearInterval(pingT); clearTimeout(connT); setUp(false); retry();
+    };
+  }
+  function retry() {
+    if (closed) return;
+    const wait = Math.min(1000 * 2 ** tries, 8000) + rnd(400);
+    tries++;
+    setTimeout(connect, wait);
+  }
+  function parse() {
+    while (buf.length >= 2) {
+      let mult = 1, len = 0, i = 1, b;
+      do { if (i >= buf.length) return; b = buf[i++]; len += (b & 127) * mult; mult *= 128; } while (b & 128);
+      if (buf.length < i + len) return;
+      const h = buf[0], body = buf.subarray(i, i + len);
+      buf = buf.slice(i + len);
+      const type = h >> 4;
+      if (type === 2) {
+        if (body[1] === 0) {
+          tries = 0; clearTimeout(connT); setUp(true);
+          for (const s of subs) sendSub(s);
+          clearInterval(pingT); pingT = setInterval(() => send(new Uint8Array([0xc0, 0])), 20000);
+        } else { try { ws.close(); } catch {} }
+      } else if (type === 3) {
+        const qos = (h >> 1) & 3, tl = (body[0] << 8) | body[1];
+        const topic = dec.decode(body.subarray(2, 2 + tl));
+        let o = 2 + tl;
+        if (qos > 0) { const a = body[o], bb = body[o + 1]; o += 2; if (qos === 1) send(new Uint8Array([0x40, 2, a, bb])); }
+        let msg = null;
+        try { msg = JSON.parse(dec.decode(body.subarray(o))); } catch {}
+        if (msg) try { onMessage(topic, msg); } catch (e) { console.error(e); }
+      }
+    }
+  }
+  connect();
+  return {
+    sub(topic) { if (subs.has(topic)) return; subs.add(topic); if (up) sendSub(topic); },
+    pub(topic, obj) { if (up) send(packet(0x30, cat(str(topic), enc.encode(JSON.stringify(obj))))); return up; },
+    get up() { return up; },
+    close() { closed = true; clearInterval(pingT); clearTimeout(connT); setUp(false); try { ws?.close(); } catch {} },
+  };
+}
+
+const params = new URLSearchParams(location.search);
+const OVERRIDE = params.get("broker");
+const BROKERS = OVERRIDE ? [OVERRIDE] : ["wss://broker.hivemq.com:8884/mqtt", "wss://broker.emqx.io:8084/mqtt", "wss://test.mosquitto.org:8081/mqtt"];
+const ALPH = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const brokerFor = (code) => BROKERS[ALPH.indexOf(code[0]) % BROKERS.length];
+const TOP = (code) => `doodlejudge/v1/${code}`;
+function makeCode(brokerIdx) {
+  let s = "";
+  do { s = ""; for (let i = 0; i < 5; i++) s += ALPH[rnd(ALPH.length)]; } while (ALPH.indexOf(s[0]) % BROKERS.length !== brokerIdx);
+  return s;
+}
+const joinUrl = (code) => {
+  const u = new URL(location.href); u.search = ""; u.hash = "";
+  u.searchParams.set("room", code);
+  if (OVERRIDE) u.searchParams.set("broker", OVERRIDE);
+  return u.toString();
+};
+
+// ---------------------------------------------------------------------
+//  Drawing board. Every drawing is a flat list of numbers so it can be
+//  streamed live and replayed exactly the same on every phone.
+//    0–999          x,y point pairs (800×800 canvas)
+//    1000+c*8+s     start a stroke (color c, size s), then points
+//    2000+c, x, y   bucket fill      3000 undo   3001 clear   3002 end stroke
+// ---------------------------------------------------------------------
+const PAL = ["#1d1a24","#ffffff","#9a96a3","#e8322c","#ff8a1f","#ffd21f","#43c43c","#11804a",
+             "#46c8f5","#2f5fe0","#8a3fd6","#ff70b8","#8a5a2b","#f7caa0","#c9874f","#ffe9b0"];
+const SIZES = [5, 12, 26, 52];
+const W = 800, OP_B = 1000, OP_F = 2000, OP_U = 3000, OP_K = 3001, OP_E = 3002;
+const RGB = PAL.map((h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)));
+
+class Board {
+  constructor(canvas) {
+    this.cv = canvas || document.createElement("canvas");
+    this.cv.width = this.cv.height = W;
+    this.g = this.cv.getContext("2d", { willReadFrequently: true });
+    this.reset();
+  }
+  reset() { this.tok = []; this.i = 0; this.ops = []; this.cur = null; this.white(); }
+  white() { this.g.fillStyle = "#fff"; this.g.fillRect(0, 0, W, W); }
+  load(tok) { this.reset(); this.push(tok || []); }
+  push(tok) { for (const v of tok) this.tok.push(v); this.run(); }
+  run() {
+    const T2 = this.tok;
+    while (this.i < T2.length) {
+      const v = T2[this.i];
+      if (v >= 1000) {
+        if (v === OP_U) { this.i++; this.endStroke(); this.ops.pop(); this.redraw(); continue; }
+        if (v === OP_K) { this.i++; this.endStroke(); this.ops.push({ k: 1 }); this.white(); continue; }
+        if (v === OP_E) { this.i++; this.endStroke(); continue; }
+        if (v >= OP_F) {
+          if (this.i + 2 >= T2.length) return;
+          this.endStroke();
+          const op = { f: 1, c: (v - OP_F) & 15, x: T2[this.i + 1], y: T2[this.i + 2] };
+          this.i += 3; this.ops.push(op); this.fill(op); continue;
+        }
+        this.endStroke();
+        const code = v - OP_B, op = { c: (code >> 3) & 15, s: Math.min(3, code & 7), p: [] };
+        this.i++; this.cur = op; this.ops.push(op); continue;
+      }
+      if (this.i + 1 >= T2.length) return;
+      const x = v, y = T2[this.i + 1]; this.i += 2;
+      if (this.cur) { this.cur.p.push(x, y); this.seg(this.cur, this.cur.p.length / 2 - 1); }
+    }
+  }
+  endStroke() { if (this.cur) { this.tail(this.cur); this.cur = null; } }
+  style(op) { const g = this.g, col = PAL[op.c]; g.strokeStyle = col; g.fillStyle = col; g.lineWidth = SIZES[op.s]; g.lineCap = "round"; g.lineJoin = "round"; }
+  seg(op, n) {
+    const g = this.g, p = op.p; this.style(op);
+    const x = p[2 * n], y = p[2 * n + 1];
+    if (n === 0) { g.beginPath(); g.arc(x, y, SIZES[op.s] / 2, 0, Math.PI * 2); g.fill(); return; }
+    const px = p[2 * n - 2], py = p[2 * n - 1], mx = (px + x) / 2, my = (py + y) / 2;
+    g.beginPath();
+    if (n === 1) { g.moveTo(px, py); g.lineTo(mx, my); }
+    else { g.moveTo((p[2 * n - 4] + px) / 2, (p[2 * n - 3] + py) / 2); g.quadraticCurveTo(px, py, mx, my); }
+    g.stroke();
+  }
+  tail(op) {
+    const p = op.p, n = p.length / 2; if (n < 2) return;
+    const g = this.g; this.style(op);
+    const x = p[2 * n - 2], y = p[2 * n - 1];
+    g.beginPath(); g.moveTo((p[2 * n - 4] + x) / 2, (p[2 * n - 3] + y) / 2); g.lineTo(x, y); g.stroke();
+  }
+  redraw() {
+    let start = 0;
+    for (let i = this.ops.length - 1; i >= 0; i--) if (this.ops[i].k) { start = i; break; }
+    this.white();
+    for (let i = start; i < this.ops.length; i++) {
+      const op = this.ops[i];
+      if (op.k) continue;
+      if (op.f) this.fill(op);
+      else { for (let k = 0; k < op.p.length / 2; k++) this.seg(op, k); if (op !== this.cur) this.tail(op); }
+    }
+  }
+  fill(op) {
+    const g = this.g, img = g.getImageData(0, 0, W, W), d = img.data;
+    const x = Math.max(0, Math.min(W - 1, op.x | 0)), y = Math.max(0, Math.min(W - 1, op.y | 0));
+    const s = (y * W + x) * 4, tr = d[s], tg = d[s + 1], tb = d[s + 2];
+    const [fr, fg, fb] = RGB[op.c];
+    if (Math.abs(tr - fr) + Math.abs(tg - fg) + Math.abs(tb - fb) < 12) return;
+    const TOL = 120, mask = new Uint8Array(W * W);
+    const ok = (q) => { const o = q * 4; return Math.abs(d[o] - tr) + Math.abs(d[o + 1] - tg) + Math.abs(d[o + 2] - tb) <= TOL; };
+    const stack = [y * W + x]; mask[y * W + x] = 1;
+    while (stack.length) {
+      const q = stack.pop(), qx = q % W;
+      if (qx > 0 && !mask[q - 1] && ok(q - 1)) { mask[q - 1] = 1; stack.push(q - 1); }
+      if (qx < W - 1 && !mask[q + 1] && ok(q + 1)) { mask[q + 1] = 1; stack.push(q + 1); }
+      if (q >= W && !mask[q - W] && ok(q - W)) { mask[q - W] = 1; stack.push(q - W); }
+      if (q < W * (W - 1) && !mask[q + W] && ok(q + W)) { mask[q + W] = 1; stack.push(q + W); }
+    }
+    for (let q = 0; q < W * W; q++) {
+      const qx = q % W;
+      if (mask[q] || (qx > 0 && mask[q - 1]) || (qx < W - 1 && mask[q + 1]) || (q >= W && mask[q - W]) || (q < W * (W - 1) && mask[q + W])) {
+        const o = q * 4; d[o] = fr; d[o + 1] = fg; d[o + 2] = fb; d[o + 3] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+  }
+  // ---- input (only on the drawer's phone) ----   opts.oneStroke: stop after the first stroke
+  enableInput(onTok, opts = {}) {
+    this.tool = this.tool || "pen"; this.color = this.color || 0; this.size = this.size ?? 1; this.enabled = true; this.onTok = onTok;
+    if (this.inputOn) return;
+    this.inputOn = true;
+    let active = null, lx = 0, ly = 0;
+    const pos = (e) => {
+      const r = this.cv.getBoundingClientRect();
+      return [Math.max(0, Math.min(W - 1, Math.round(((e.clientX - r.left) / r.width) * W))),
+              Math.max(0, Math.min(W - 1, Math.round(((e.clientY - r.top) / r.height) * W)))];
+    };
+    const emit = (arr) => { this.push(arr); this.onTok(arr); };
+    this.cv.addEventListener("pointerdown", (e) => {
+      if (!this.enabled || active !== null) return;
+      e.preventDefault();
+      const [x, y] = pos(e);
+      if (this.tool === "fill") { emit([OP_F + this.color, x, y]); return; }
+      active = e.pointerId; try { this.cv.setPointerCapture(e.pointerId); } catch {}
+      const c = this.tool === "eraser" ? 1 : this.color;
+      emit([OP_B + c * 8 + this.size, x, y]); lx = x; ly = y;
+    });
+    this.cv.addEventListener("pointermove", (e) => {
+      if (e.pointerId !== active || !this.enabled) return;
+      e.preventDefault();
+      const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      const add = [];
+      for (const ce of evs.length ? evs : [e]) {
+        const [x, y] = pos(ce), d = Math.hypot(x - lx, y - ly);
+        if (d >= 2.5) { add.push(x, y); lx = x; ly = y; }
+      }
+      if (add.length) emit(add);
+    });
+    const up = (e) => {
+      if (e.pointerId !== active) return;
+      active = null;
+      if (this.enabled) { emit([OP_E]); if (opts.oneStroke) { this.enabled = false; opts.onStroke?.(); } }
+    };
+    this.cv.addEventListener("pointerup", up);
+    this.cv.addEventListener("pointercancel", up);
+    this.cv.addEventListener("contextmenu", (e) => e.preventDefault());
+    this.stop = () => { if (active !== null) { active = null; emit([OP_E]); } this.enabled = false; };
+  }
+  act(kind) { if (!this.enabled) return; const a = kind === "undo" ? [OP_U] : [OP_K]; this.push(a); this.onTok(a); }
+}
+// thumbnails (cached)
+const thumbCache = new Map();
+function drawingImg(tok, key) {
+  if (key && thumbCache.has(key)) return thumbCache.get(key);
+  const b = new Board(); b.load(tok);
+  const c = document.createElement("canvas"); c.width = c.height = 400;
+  c.getContext("2d").drawImage(b.cv, 0, 0, 400, 400);
+  const url = c.toDataURL("image/png");
+  if (key) thumbCache.set(key, url);
+  return url;
+}
+// merge a streamed piece of a drawing into a token list
+function mergeTok(L, m) {
+  if (m.full || m.fin) return m.tok.length >= L.length || m.fin ? m.tok.slice() : L;
+  if (m.from === L.length) { for (const v of m.tok) L.push(v); }
+  else if (m.from < L.length && m.from + m.tok.length > L.length) { for (const v of m.tok.slice(L.length - m.from)) L.push(v); }
+  return L;
+}
+
+// =====================================================================
+//  HOST ENGINE — runs only on the host's phone. It owns the game state.
+//
+//  Each round: one judge, everyone else is a drawer. Every drawer owns one
+//  "slot" (a card). Normally a drawer draws their own slot. The saboteur also
+//  draws the victim's slot; in Pass-it-on the slots change hands halfway.
+//  sec.artist[k] = who is drawing slot k right now (kept secret).
+// =====================================================================
+let H = null;
+function hostCreate(name) {
+  const meId = rid(8);
+  H = {
+    code: makeCode(0), brokerIdx: 0, hid: rid(6), me: { id: meId, name },
+    st: {
+      hid: "", v: 0, phase: "lobby", lang: LANG, hostId: meId,
+      set: { cat: "normal", time: 60, rounds: -1, guess: "type", hint: true, twist: "none", sab: false, odd: false },
+      players: [{ id: meId, name, score: 0, col: 0, on: true, ready: false, wait: false }],
+      round: 0, maxR: 0, rid: "", judge: "", drawers: [], parts: [], cards: [], leg: 1, doneK: [],
+      left: 0, total: 0, twist: "none", sabOn: false, oddOn: false, guess: null, pick: null, res: null, customN: 0,
+    },
+    sec: null, slots: {}, seen: {}, used: {}, custom: [], deadline: 0,
+    judgeCount: {}, lastJudge: "", sabCount: {}, oddCount: {}, twistBag: null, lastTwist: "",
+  };
+  H.st.hid = H.hid;
+  return H;
+}
+const hP = (id) => H.st.players.find((p) => p.id === id);
+const hOnline = (id) => id === H.me.id || now() - (H.seen[id] || 0) < 15000;
+// Save the host's game so a reload can pick up where it left off (throttled, not debounced).
+function hSaveNow() { clearTimeout(hSave.t); hSave.t = 0; if (H) store.set("dj_host", { ts: now(), H }); }
+function hSave() { if (!hSave.t) hSave.t = setTimeout(hSaveNow, 300); }
+window.addEventListener("pagehide", () => H && hSaveNow());
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && H) hSaveNow(); });
+function hPublish() {
+  const st = H.st; st.v++;
+  st.left = H.deadline ? Math.max(0, H.deadline - now()) : 0;
+  H.lastPub = now();
+  C.conn?.pub(TOP(H.code) + "/s", st);
+  onState(JSON.parse(JSON.stringify(st)));
+  hSave();
+}
+function hPriv(id, msg) {
+  if (id === H.me.id) onPriv(msg);
+  else C.conn?.pub(TOP(H.code) + "/p/" + id, msg);
+}
+const inRound = () => ["reveal", "draw", "guess", "pick"].includes(H.st.phase);
+function hSendRole(id) {
+  const st = H.st, S = H.sec;
+  if (!S || !inRound() || !st.parts.includes(id)) return;
+  const slots = S.artist.map((a, k) => (a === id ? k : -1)).filter((k) => k >= 0);
+  const role = id === st.judge ? "judge" : id === S.sab ? "sab" : id === S.victim ? "locked" : "drawer";
+  hPriv(id, { t: "role", rid: st.rid, leg: st.leg, role, slots, own: st.drawers.indexOf(id),
+    word: role === "judge" ? null : id === S.odd ? S.oddWord : S.word,
+    cat: role === "judge" ? (st.set.hint ? S.hint : null) : S.hint,
+    victim: role === "sab" ? S.victim : null });
+}
+// the finished cards only go out once drawing is over (nobody sees them early)
+function hSendSlot(k) {
+  const s = H.slots[k];
+  if (!s || !["guess", "pick", "result"].includes(H.st.phase)) return;
+  const m = { rid: H.st.rid, k, tok: s.tok };
+  C.conn?.pub(TOP(H.code) + "/g", m);
+  onGal(m);
+}
+function uniqueName(name, id) {
+  name = (name || "?").trim().slice(0, 16) || "?";
+  let n = name, i = 2;
+  while (H.st.players.some((p) => p.id !== id && p.name.toLowerCase() === n.toLowerCase())) n = name + " " + i++;
+  return n;
+}
+function hMsg(m) {
+  if (!H || !m || !m.id) return;
+  const fresh = !hOnline(m.id);
+  H.seen[m.id] = now();
+  const st = H.st, p = hP(m.id), S = H.sec;
+  if (p && fresh && !p.on) { p.on = true; hPublish(); }
+  switch (m.t) {
+    case "hello": {
+      if (m.tv) { if (now() - (H.lastPub || 0) > 300) hPublish(); return; }
+      if (!p) {
+        if (st.players.length >= 12) { hPriv(m.id, { t: "full" }); return; }
+        const used = new Set(st.players.map((x) => x.col));
+        let col = 0; while (used.has(col) && col < 30) col++;
+        st.players.push({ id: m.id, name: uniqueName(m.name, m.id), score: 0, col, on: true, ready: false, wait: st.phase !== "lobby" && st.phase !== "final" });
+      } else if (m.name && m.name.trim() && m.name.trim().slice(0, 16) !== p.name) p.name = uniqueName(m.name, p.id);
+      hSendRole(m.id);
+      hPublish();
+      break;
+    }
+    case "ready":
+      if (p && st.phase === "reveal" && !p.ready) { p.ready = true; hPublish(); hCheckReady(); }
+      break;
+    case "resume": {
+      // a drawer's pad asks for whatever is already on its card (start, reload, or Pass-it-on)
+      const k = m.k | 0, s = H.slots[k];
+      if (st.phase === "draw" && S && m.rid === st.rid && m.leg === st.leg && s && S.artist[k] === m.id)
+        hPriv(m.id, { t: "resume", rid: st.rid, leg: st.leg, k, tok: s.tok, fin: s.fin });
+      break;
+    }
+    case "guess": hGuess(m.id, m); break;
+    case "pick": hPick(m.id, m.k); break;
+    case "accuse": hAccuse(m.id, m.to); break;
+    case "need":
+      if (m.rid === st.rid) for (const k of (m.ks || []).slice(0, 12)) {
+        H.needT = H.needT || {};
+        if (now() - (H.needT[k] || 0) > 2000) { H.needT[k] = now(); hSendSlot(k | 0); }
+      }
+      break;
+    case "leave": hRemove(m.id); break;
+  }
+}
+function hDraw(m) {
+  const st = H.st, S = H.sec;
+  if (!m || !S || m.rid !== st.rid || st.phase !== "draw" || m.leg !== st.leg) return;
+  const s = H.slots[m.k];
+  if (!s || S.artist[m.k] !== m.by || s.fin) return;
+  // "app" = the pad never got the card's earlier lines, so add its lines after them
+  if (m.app) s.tok = s.tok.length && m.tok.length ? s.tok.concat([OP_E], m.tok) : s.tok.length ? s.tok : m.tok.slice();
+  else s.tok = mergeTok(s.tok, m);
+  if (m.fin) {
+    s.fin = true;
+    st.doneK = hDoneK();
+    hPublish();
+    hCheckDraw();
+  }
+  hSave();
+}
+const hDoneK = () => Object.keys(H.slots).filter((k) => H.slots[k].fin).map(Number);
+function pickWord() {
+  const cat = H.st.set.cat;
+  let pool;
+  if (cat === "custom" && H.custom.length) pool = H.custom.map((_, i) => ({ c: "custom", i }));
+  else pool = packIds(cat).flatMap((id) => PACKS[id].words.map((_, i) => ({ c: id, i })));
+  let avail = pool.filter((x) => !H.used[x.c + ":" + x.i]);
+  if (!avail.length) { for (const x of pool) delete H.used[x.c + ":" + x.i]; avail = pool; }
+  const w = pick(avail); H.used[w.c + ":" + w.i] = 1;
+  return w;
+}
+const wordText = (w) => w.c === "custom" ? H.custom[w.i] : PACKS[w.c].words[w.i][H.st.lang];
+const hintText = (w) => w.c === "custom" ? null : PACKS[w.c].words[w.i][H.st.lang === "es" ? "hes" : "hen"];
+const wordTargets = (w) => w.c === "custom" ? [H.custom[w.i]] : [PACKS[w.c].words[w.i].en, PACKS[w.c].words[w.i].es];
+// the odd-one-out word: another word from the same group, so the drawing is close but wrong
+function oddWordFor(w) {
+  if (w.c === "custom") {
+    const o = H.custom.map((_, i) => i).filter((i) => i !== w.i && normWord(H.custom[i]) !== normWord(H.custom[w.i]));
+    if (!o.length) return null;
+    const i = pick(o);
+    return { text: cap(H.custom[i]), targets: [H.custom[i]] };
+  }
+  const ws = PACKS[w.c].words, me = ws[w.i];
+  let o = ws.filter((x, i) => i !== w.i && x.hen === me.hen);
+  if (!o.length) o = ws.filter((x, i) => i !== w.i);
+  const x = pick(o);
+  return { text: cap(x[H.st.lang]), targets: [x.en, x.es] };
+}
+function guessChoices() {
+  const S = H.sec, w = S.w, L = H.st.lang, word = S.word;
+  let others;
+  if (w.c === "custom") others = shuffle(H.custom.filter((x, i) => i !== w.i));
+  else {
+    const ws = PACKS[w.c].words, me = ws[w.i];
+    others = [...shuffle(ws.filter((x, i) => i !== w.i && x.hen === me.hen)), ...shuffle(ws.filter((x) => x.hen !== me.hen))].map((x) => x[L]);
+  }
+  others = others.map(cap).filter((x) => normWord(x) !== normWord(word));
+  if (S.oddWord) { others = others.filter((x) => normWord(x) !== normWord(S.oddWord)); others.unshift(S.oddWord); }
+  others = [...new Set(others)].slice(0, 7);
+  if (others.length < 7) {
+    const extra = shuffle(CATS.flatMap((c) => PACKS[c.id].words.map((x) => cap(x[L]))))
+      .filter((x) => normWord(x) !== normWord(word) && !others.includes(x));
+    others.push(...extra.slice(0, 7 - others.length));
+  }
+  return shuffle([word, ...others]);
+}
+// fewest-times-first, avoiding a repeat when possible
+function fairPick(ids, counts, avoid) {
+  const min = Math.min(...ids.map((id) => counts[id] || 0));
+  let c = ids.filter((id) => (counts[id] || 0) === min);
+  if (c.length > 1 && avoid) c = c.filter((id) => id !== avoid);
+  const x = pick(c); counts[x] = (counts[x] || 0) + 1;
+  return x;
+}
+// everyone gets a slot that isn't their own (a derangement)
+function derange(list) {
+  for (let tries = 0; tries < 300; tries++) {
+    const a = shuffle(list);
+    if (!a.some((x, i) => x === list[i])) return a;
+  }
+  return list.map((_, i) => list[(i + 1) % list.length]);
+}
+function hNewRound() {
+  const st = H.st;
+  for (const p of st.players) { p.wait = false; p.on = hOnline(p.id); p.ready = false; }
+  const parts = st.players.filter((p) => p.on).map((p) => p.id);
+  if (parts.length < 3) { toast(t("need3")); return; }
+  if (st.round === 0) st.maxR = st.set.rounds < 0 ? -st.set.rounds * parts.length : st.set.rounds;
+  // judge: next in seat order among those who've judged the fewest times
+  const minJ = Math.min(...parts.map((id) => H.judgeCount[id] || 0));
+  const seat = st.players.map((p) => p.id), at = seat.indexOf(H.lastJudge);
+  const ring = [...seat.slice(at + 1), ...seat.slice(0, at + 1)].filter((id) => parts.includes(id));
+  const judge = ring.find((id) => (H.judgeCount[id] || 0) === minJ) || ring[0];
+  H.judgeCount[judge] = (H.judgeCount[judge] || 0) + 1; H.lastJudge = judge;
+  const drawers = shuffle(parts.filter((id) => id !== judge));
+  const w = pickWord();
+  // twist (Random deals from a shuffled bag so every twist comes up before any repeats)
+  let twist = st.set.twist || "none";
+  if (twist === "random") {
+    if (!H.twistBag || !H.twistBag.length) {
+      const bag = shuffle(RANDOM_TWISTS);
+      if (bag[0] === H.lastTwist) bag.push(bag.shift());
+      H.twistBag = bag;
+    }
+    twist = H.twistBag.shift(); H.lastTwist = twist;
+  }
+  if (twist === "pass" && drawers.length < 2) twist = "none";
+  const artist = drawers.slice();
+  let sab = null, victim = null;
+  if (st.set.sab && drawers.length >= 3 && twist !== "pass") {
+    sab = fairPick(drawers, H.sabCount);
+    victim = pick(drawers.filter((id) => id !== sab));
+    artist[drawers.indexOf(victim)] = sab;
+  }
+  let odd = null, oddW = null;
+  if (st.set.odd && drawers.length >= 3) {
+    const cand = drawers.filter((id) => id !== sab && id !== victim);
+    oddW = oddWordFor(w);
+    if (cand.length && oddW) odd = fairPick(cand, H.oddCount);
+  }
+  const artist2 = twist === "pass" ? derange(drawers) : null;
+  H.sec = { w, word: cap(wordText(w)), hint: hintText(w), targets: wordTargets(w), sab, victim,
+    odd, oddWord: odd ? oddW.text : null, oddTargets: odd ? oddW.targets : null, oddHit: false,
+    artist, artist2, artists: drawers.map((_, k) => artist2 ? [artist[k], artist2[k]] : [artist[k]]),
+    choices: null, accuse: null };
+  H.slots = {}; drawers.forEach((_, k) => (H.slots[k] = { tok: [], fin: false }));
+  H.deadline = 0;
+  Object.assign(st, { phase: "reveal", round: st.round + 1, rid: rid(4), judge, drawers, parts,
+    cards: shuffle(drawers.map((_, k) => k)), leg: 1, doneK: [], twist, sabOn: !!sab, oddOn: !!odd,
+    guess: null, pick: null, res: null, total: 0 });
+  for (const id of parts) hSendRole(id);
+  hPublish();
+}
+function hCheckReady() {
+  const st = H.st;
+  if (st.phase !== "reveal") return;
+  const need = st.parts.filter((id) => hOnline(id));
+  if (need.every((id) => hP(id)?.ready)) { clearTimeout(H.readyT); H.readyT = setTimeout(() => H.st.phase === "reveal" && hStartDraw(), 900); }
+}
+function hStartDraw() {
+  const st = H.st;
+  if (st.phase !== "reveal") return;
+  st.phase = "draw"; st.leg = 1;
+  hStartLeg();
+}
+function legMs() {
+  const st = H.st, secs = st.twist === "speed" ? 30 : st.set.time;
+  return Math.round((st.twist === "pass" ? secs / 2 : secs) * 1000);
+}
+function hStartLeg() {
+  const st = H.st;
+  for (const s of Object.values(H.slots)) s.fin = false;
+  st.doneK = [];
+  H.deadline = now() + legMs(); st.total = legMs();
+  hPublish();
+  hCheckDraw();
+}
+// drawing ends early once every card that someone online is drawing is done
+function hCheckDraw() {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "draw") return;
+  const all = Object.entries(H.slots).every(([k, s]) => s.fin || !hOnline(S.artist[k]));
+  if (all) {
+    clearTimeout(H.legT);
+    const leg = st.leg, r = st.rid;
+    H.legT = setTimeout(() => { if (H.st.phase === "draw" && H.st.leg === leg && H.st.rid === r) hEndLeg(); }, 700);
+  }
+}
+function hEndLeg() {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "draw") return;
+  clearTimeout(H.legT);
+  if (st.twist === "pass" && st.leg === 1 && S.artist2) {
+    // 🔄 Pass it on: every card goes to a new artist, who carries on from where it was
+    st.leg = 2; S.artist = S.artist2.slice();
+    for (const id of st.parts) hSendRole(id);
+    hStartLeg();
+    for (const k of Object.keys(H.slots)) hPriv(S.artist[k], { t: "resume", rid: st.rid, leg: 2, k: +k, tok: H.slots[k].tok, fin: false });
+    return;
+  }
+  hStartGuess();
+}
+function hStartGuess() {
+  const st = H.st, S = H.sec;
+  st.phase = "guess"; st.doneK = hDoneK();
+  H.deadline = now() + 90000; st.total = 90000;
+  S.choices = st.set.guess === "pick" ? guessChoices() : null;
+  st.guess = { mode: st.set.guess === "pick" ? "pick" : "type", tries: [], choices: S.choices, done: false, ok: null, word: null, over: false };
+  hPublish();
+  for (const k of Object.keys(H.slots)) hSendSlot(+k);
+}
+function hGuess(id, m) {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "guess" || id !== st.judge || st.guess.done) return;
+  let txt;
+  if (st.guess.mode === "pick") { const i = m.i | 0; if (!S.choices || i < 0 || i >= S.choices.length) return; txt = S.choices[i]; }
+  else { txt = String(m.txt || "").trim().slice(0, 40); if (!txt) return; }
+  const ok = guessMatches(txt, S.targets);
+  if (!ok && S.odd && guessMatches(txt, S.oddTargets)) S.oddHit = true;
+  st.guess.tries.push({ txt, ok });
+  const max = st.guess.mode === "pick" ? 1 : 2;
+  if (ok || st.guess.tries.length >= max) return hGuessDone(ok);
+  hPublish();
+}
+function hGuessDone(ok) {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "guess") return;
+  Object.assign(st.guess, { done: true, ok: !!ok, word: S.word });
+  st.phase = "pick";
+  H.deadline = now() + 60000; st.total = 60000;
+  st.pick = { k: null, acc: !!S.victim && st.parts.includes(S.victim), accDone: false };
+  hPublish();
+}
+function hPick(id, k) {
+  const st = H.st;
+  if (st.phase !== "pick" || id !== st.judge || !st.cards.includes(k)) return;
+  st.pick.k = k;
+  hPublish();
+  hCheckPick();
+}
+function hAccuse(id, to) {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "pick" || !S.victim || id !== S.victim || to === id || to === st.judge || !st.parts.includes(to)) return;
+  S.accuse = to; st.pick.accDone = true;
+  hPublish();
+  hCheckPick();
+}
+function hCheckPick() {
+  const st = H.st, S = H.sec;
+  if (st.phase !== "pick" || st.pick.k == null) return;
+  if (st.pick.acc && !st.pick.accDone && hOnline(S.victim)) return;
+  clearTimeout(H.pickT);
+  const r = st.rid;
+  H.pickT = setTimeout(() => { if (H.st.phase === "pick" && H.st.rid === r) hResult({}); }, 1200);
+}
+// host override: "that typo counts!"
+function hCountIt() {
+  const st = H.st;
+  if (st.phase !== "pick" || st.guess.ok) return;
+  st.guess.ok = true; st.guess.over = true;
+  hPublish();
+}
+function hResult(r) {
+  const st = H.st, S = H.sec;
+  clearTimeout(H.pickT);
+  const gains = {};
+  const add = (id, n) => { if (st.parts.includes(id)) gains[id] = (gains[id] || 0) + n; };
+  let fav = null, favArtists = [], acc = null;
+  if (!r.aborted) {
+    if (st.guess?.ok) { for (const id of st.drawers) add(id, 1); add(st.judge, 2); }
+    if (S.oddHit && S.odd) add(S.odd, 1);
+    if (st.pick?.k != null) {
+      fav = st.pick.k;
+      favArtists = [...new Set(S.artists[fav])];
+      for (const a of favArtists) add(a, 1);
+    }
+    if (S.victim) {
+      acc = { victim: S.victim, sab: S.sab, to: S.accuse || null, ok: S.accuse === S.sab };
+      add(acc.ok ? S.victim : S.sab, 1);
+    }
+    for (const [id, n] of Object.entries(gains)) { const p = hP(id); if (p) p.score += n; }
+  }
+  st.phase = "result"; H.deadline = 0; st.total = 0;
+  st.res = { word: S.word, judge: st.judge, guessOk: !!st.guess?.ok, over: !!st.guess?.over, tries: st.guess?.tries || [],
+    owners: st.drawers.slice(), artists: S.artists, fav, favArtists, acc,
+    odd: S.odd, oddWord: S.oddWord, oddHit: !!S.oddHit, gains, aborted: r.aborted || null };
+  hPublish();
+  for (const k of Object.keys(H.slots)) hSendSlot(+k);
+}
+function hNext() {
+  const st = H.st;
+  if (st.maxR && st.round >= st.maxR) { st.phase = "final"; H.deadline = 0; hPublish(); }
+  else hNewRound();
+}
+function hEnd() { H.st.phase = "final"; H.deadline = 0; hPublish(); }
+function hPlayAgain() {
+  const st = H.st;
+  for (const p of st.players) { p.score = 0; p.wait = false; p.ready = false; }
+  Object.assign(st, { phase: "lobby", round: 0, maxR: 0, rid: "", judge: "", drawers: [], parts: [], cards: [], doneK: [], guess: null, pick: null, res: null });
+  H.judgeCount = {}; H.sabCount = {}; H.oddCount = {}; H.lastJudge = ""; H.deadline = 0; H.twistBag = null;
+  hPublish();
+}
+function hRemove(id) {
+  const st = H.st;
+  if (id === H.me.id || !hP(id)) return;
+  st.players = st.players.filter((x) => x.id !== id);
+  hPriv(id, { t: "kick" });
+  if (inRound() && st.parts.includes(id)) {
+    if (id === st.judge) return hResult({ aborted: "judge" });
+    st.parts = st.parts.filter((x) => x !== id);
+    if (st.parts.length < 3) return hResult({ aborted: "few" });
+    if (st.phase === "reveal") hCheckReady();
+    if (st.phase === "draw") hCheckDraw();
+    if (st.phase === "pick") { if (H.sec.victim === id) st.pick.acc = false; hCheckPick(); }
+  }
+  hPublish();
+}
+function hSkipRound() { if (inRound()) hResult({ aborted: "skip" }); }
+function hTick() {
+  if (!H) return;
+  const st = H.st, t0 = now();
+  let changed = false;
+  for (const p of st.players) { const on = hOnline(p.id); if (on !== p.on) { p.on = on; changed = true; } }
+  if (changed) { hPublish(); hCheckReady(); hCheckDraw(); hCheckPick(); }
+  if (st.phase === "draw" && H.deadline && t0 > H.deadline + 1500) hEndLeg();
+  else if (st.phase === "guess" && H.deadline && t0 > H.deadline + 800) hGuessDone(false);
+  else if (st.phase === "pick" && H.deadline && t0 > H.deadline + 800) hResult({});
+  else if (t0 - (H.lastPub || 0) > 4000) hPublish();
+}
+function hostConnect() {
+  C.conn?.close();
+  const code = H.code, top = TOP(code);
+  C.code = code;
+  C.conn = relay(brokerFor(code), {
+    onStatus(up) { setDot(up); if (up) hPublish(); },
+    onMessage(topic, m) {
+      if (topic === top + "/h") hMsg(m);
+      else if (topic.startsWith(top + "/d/")) { if (m.by !== H.me.id) { hDraw(m); onDraw(m); } }
+    },
+  });
+  C.conn.sub(top + "/h");
+  C.conn.sub(top + "/d/#");
+  clearTimeout(H.fallT);
+  if (!OVERRIDE && H.st.phase === "lobby" && H.st.players.length === 1) {
+    H.fallT = setTimeout(() => {
+      if (C.conn?.up || !H || H.st.players.length > 1) return;
+      H.brokerIdx = (H.brokerIdx + 1) % BROKERS.length;
+      H.code = makeCode(H.brokerIdx);
+      toast(t("hostFallback"));
+      hostConnect(); render();
+    }, 7000);
+  }
+}
+function hostStart(name, resume) {
+  if (!resume) hostCreate(name);
+  C.me = { id: H.me.id, name: H.me.name };
+  C.isHost = true; C.tv = false; C.screen = "room";
+  C.st = null; C.priv = null; C.gal = {}; C.galRid = ""; C.pads = {};
+  LANG = H.st.lang;
+  hostConnect();
+  clearInterval(C.hostTimer); C.hostTimer = setInterval(hTick, 250);
+  onState(JSON.parse(JSON.stringify(H.st)));
+  if (H.sec && inRound()) hSendRole(H.me.id);
+  hPublish();
+  for (const k of Object.keys(H.slots || {})) hSendSlot(+k);
+  keepAwake();
+}
+
+// =====================================================================
+//  CLIENT — every device (host included) uses this to show the game.
+// =====================================================================
+const C = {
+  screen: "home", code: "", me: null, isHost: false, tv: false, conn: null,
+  st: null, stAt: 0, priv: null, gal: {}, galRid: "", pads: {}, watch: null, tab: 0,
+  lastHello: 0, lastPing: 0, lastNeed: 0, joinAt: 0, key: "", upd: null,
+};
+function sendHost(m) {
+  m.id = C.me?.id || m.id;
+  if (C.isHost) hMsg(m);
+  else C.conn?.pub(TOP(C.code) + "/h", m);
+}
+function setDot(up) { const d = $("#cdot"); if (d) d.className = "dot " + (up ? "ok" : "bad"); C.up = up; }
+
+function joinRoom(code, name, tv) {
+  C.conn?.close();
+  code = code.toUpperCase();
+  C.code = code; C.tv = !!tv; C.isHost = false; C.screen = "room";
+  C.st = null; C.priv = null; C.gal = {}; C.galRid = ""; C.pads = {}; C.watch = null; C.joinAt = now();
+  if (!tv) {
+    const saved = store.get("dj_player");
+    const id = saved && saved.code === code ? saved.id : rid(8);
+    C.me = { id, name };
+    store.set("dj_player", { code, id, name, ts: now() });
+  } else C.me = { id: "tv" + rid(4), name: "TV" };
+  document.body.classList.toggle("tv", !!tv);
+  const top = TOP(code);
+  C.conn = relay(brokerFor(code), {
+    onStatus(up) { setDot(up); if (up) hello(true); },
+    onMessage(topic, m) {
+      if (topic === top + "/s") onState(m);
+      else if (topic.startsWith(top + "/d/")) { if (m.by !== C.me.id) onDraw(m); }
+      else if (topic === top + "/g") onGal(m);
+      else if (topic === top + "/p/" + C.me.id) onPriv(m);
+    },
+  });
+  for (const s of ["/s", "/g", "/p/" + C.me.id]) C.conn.sub(top + s);
+  keepAwake();
+  render();
+}
+function hello(force) {
+  if (!C.code || C.isHost || !C.conn) return;
+  if (!force && now() - C.lastHello < 2500) return;
+  C.lastHello = now();
+  sendHost({ t: "hello", name: C.me.name, tv: C.tv || undefined });
+}
+const myPriv = () => (C.priv && C.st && C.priv.rid === C.st.rid ? C.priv : null);
+function onState(st) {
+  if (!st || (C.st && st.hid === C.st.hid && st.v < C.st.v && !C.isHost)) return;
+  const prev = C.st;
+  C.st = st; C.stAt = now();
+  if (st.lang !== LANG) LANG = st.lang;
+  if (st.rid !== C.galRid) { C.gal = {}; C.galRid = st.rid; C.watch = null; C.tab = 0; C.myPick = null; C.myAcc = null; }
+  if (!C.isHost && !C.tv && !st.players.some((p) => p.id === C.me.id)) {
+    if (now() - C.joinAt > 1500) hello();
+  }
+  // the drawing part (or this half of it) is over → wrap up my cards
+  for (const pad of Object.values(C.pads))
+    if (!pad.fin && (pad.rid !== st.rid || pad.leg !== st.leg || st.phase !== "draw")) finishPad(pad);
+  if (prev && prev.phase !== st.phase) {
+    if (st.phase === "reveal") { beep(520, .15); beep(780, .2); buzz(80); }
+    if (st.phase === "draw") { beep(700, .12); setTimeout(() => beep(990, .18), 140); buzz([60, 40, 60]); }
+    if (st.phase === "guess") { beep(440, .15); buzz(60); }
+    if (st.phase === "pick") st.guess?.ok ? (beep(880, .15), setTimeout(() => beep(1180, .2), 150)) : beep(300, .3);
+    if (st.phase === "result") beep(880, .25);
+  } else if (prev && st.phase === "draw" && prev.leg !== st.leg) { beep(600, .12); setTimeout(() => beep(900, .15), 130); buzz([50, 30, 50]); }
+  render();
+}
+function onPriv(m) {
+  if (!m) return;
+  if (m.t === "role") { C.priv = m; render(); }
+  else if (m.t === "resume") gotResume(m);
+  else if (m.t === "kick") { leaveRoom(); toast(t("removed")); }
+  else if (m.t === "full") { leaveRoom(); toast(t("full")); }
+}
+// live drawing coming in — only the locked-out player watches one (their own card)
+function onDraw(m) {
+  const st = C.st, W2 = C.watch;
+  if (!st || !W2 || m.rid !== st.rid || m.k !== W2.k || m.leg !== st.leg) return;
+  const before = W2.tok.length;
+  if (m.app) return;
+  W2.tok = mergeTok(W2.tok, m);
+  if (W2.board) { if (m.full || m.fin) W2.board.load(W2.tok); else if (W2.tok.length > before) W2.board.push(W2.tok.slice(before)); }
+}
+function onGal(m) {
+  if (!C.st || m.rid !== C.st.rid) return;
+  const old = C.gal[m.k];
+  if (old && old.tok.length === m.tok.length) return;
+  C.gal[m.k] = { tok: m.tok };
+  C.galDirty = true;
+}
+function leaveRoom(sendLeave) {
+  if (sendLeave && !C.isHost && C.code) sendHost({ t: "leave" });
+  if (C.isHost) { store.set("dj_host", null); clearInterval(C.hostTimer); H = null; }
+  else store.set("dj_player", null);
+  for (const pad of Object.values(C.pads)) clearInterval(pad.flushT);
+  setTimeout(() => C.conn?.close(), sendLeave ? 300 : 0);
+  Object.assign(C, { screen: "home", code: "", isHost: false, tv: false, st: null, priv: null, gal: {}, pads: {}, watch: null, key: "" });
+  document.body.classList.remove("tv");
+  history.replaceState(null, "", location.pathname + (OVERRIDE ? "?broker=" + encodeURIComponent(OVERRIDE) : ""));
+  render();
+}
+
+// ---- my cards ("pads"). A pad streams one card to the host while I draw it. ----
+//  A pad doesn't send anything until the host has told it what's already on the
+//  card (nothing at the start, earlier lines after a reload or a Pass-it-on).
+const padKey = (r, leg, k) => r + ":" + leg + ":" + k;
+function makePad(board, k) {
+  const st = C.st, key = padKey(st.rid, st.leg, k);
+  let pad = C.pads[key];
+  if (pad) {
+    const old = pad.board;
+    board.tool = old.tool; board.color = old.color; board.size = old.size;
+    board.load(pad.tok);
+    pad.board = board;
+    if (!pad.fin && !pad.lineUsed) padInput(pad);
+    return pad;
+  }
+  pad = { key, rid: st.rid, leg: st.leg, k, board, tok: [], sent: 0, lastSnap: now(), snapLen: 0, fin: false, ready: false, askAt: 0 };
+  C.pads[key] = pad;
+  padInput(pad);
+  askResume(pad);
+  pad.flushT = setInterval(() => flushPad(pad), 100);
+  return pad;
+}
+function padInput(pad) {
+  const b = pad.board;
+  b.enableInput((arr) => { if (pad.board === b && !pad.fin) pad.tok.push(...arr); },
+    C.st.twist === "oneline" ? { oneStroke: true, onStroke: () => { pad.lineUsed = true; setTimeout(() => { finishPad(pad); render(); }, 400); } } : {});
+}
+function askResume(pad) { pad.askAt = now(); sendHost({ t: "resume", rid: pad.rid, leg: pad.leg, k: pad.k }); }
+function gotResume(m) {
+  const pad = C.pads[padKey(m.rid, m.leg, m.k)];
+  if (!pad || pad.ready) return;
+  pad.ready = true;
+  if (m.tok.length) {
+    pad.tok = pad.tok.length ? m.tok.concat([OP_E], pad.tok) : m.tok.slice();
+    pad.board.load(pad.tok);
+  }
+  if (m.fin) { pad.fin = true; clearInterval(pad.flushT); pad.board.stop?.(); render(); return; }
+  // One line only: if I reloaded after starting my line, that line was my one stroke
+  if (C.st?.twist === "oneline" && m.tok.length) { pad.lineUsed = true; pad.sent = 0; finishPad(pad); render(); return; }
+  if (pad.tok.length) pubDraw({ rid: pad.rid, leg: pad.leg, k: pad.k, full: true, tok: pad.tok });
+  pad.sent = pad.snapLen = pad.tok.length; pad.lastSnap = now();
+}
+function pubDraw(m) {
+  m.by = C.me.id;
+  C.conn?.pub(TOP(C.code) + "/d/" + m.k, m);
+  if (C.isHost) hDraw(m);
+}
+function flushPad(pad) {
+  if (pad.fin) return;
+  if (!pad.ready) { if (now() - pad.askAt > 1500) askResume(pad); return; }
+  if (pad.tok.length > pad.sent) {
+    pubDraw({ rid: pad.rid, leg: pad.leg, k: pad.k, from: pad.sent, tok: pad.tok.slice(pad.sent) });
+    pad.sent = pad.tok.length;
+  }
+  if (now() - pad.lastSnap > 2500 && pad.snapLen !== pad.tok.length) {
+    pad.lastSnap = now(); pad.snapLen = pad.tok.length;
+    pubDraw({ rid: pad.rid, leg: pad.leg, k: pad.k, full: true, tok: pad.tok });
+  }
+}
+function finishPad(pad) {
+  if (!pad || pad.fin) return;
+  pad.board.stop?.();
+  flushPad(pad);
+  pad.fin = true; clearInterval(pad.flushT);
+  const m = { rid: pad.rid, leg: pad.leg, k: pad.k, fin: true, tok: pad.tok.slice() };
+  if (!pad.ready) m.app = true;
+  pubDraw(m);
+  // send the final copy twice in case one gets lost
+  setTimeout(() => { if (C.st && C.st.rid === pad.rid) pubDraw(Object.assign({}, m)); }, 900);
+}
+const activePads = () => Object.values(C.pads).filter((p) => C.st && p.rid === C.st.rid && p.leg === C.st.leg);
+
+// ---- client timer loop ----
+const deadline = () => C.st ? C.stAt + (C.st.left || 0) : 0;
+function clientTick() {
+  const st = C.st;
+  if (C.screen === "room" && C.code) {
+    if (!C.isHost) {
+      if (!st) hello();
+      else if (now() - C.stAt > 12000) { $("#hostBanner") || $("#main").prepend(el("div", { class: "banner", id: "hostBanner" }, "⏳ " + t("hostBack"))); hello(); }
+      else $("#hostBanner")?.remove();
+      if (!C.tv && now() - C.lastPing > 5000) { C.lastPing = now(); sendHost({ t: "ping" }); }
+      if (st && !C.tv && (!myPriv() || myPriv().leg !== st.leg) && ["reveal", "draw", "guess", "pick"].includes(st.phase) && st.parts.includes(C.me.id)) hello();
+      if (st && ["guess", "pick", "result"].includes(st.phase)) {
+        const miss = st.cards.filter((k) => !C.gal[k]);
+        if (miss.length && now() - C.lastNeed > 3000 && now() - C.stAt < 12000) { C.lastNeed = now(); sendHost({ t: "need", rid: st.rid, ks: miss }); }
+      }
+    }
+    if (C.galDirty) { C.galDirty = false; C.updGal?.(); }
+  }
+  tickFrame();
+}
+let lastTickSec = -1;
+function tickFrame() {
+  const st = C.st;
+  if (!st || !st.total) return;
+  const left = Math.max(0, deadline() - now()), s = Math.ceil(left / 1000);
+  document.querySelectorAll(".timer").forEach((e) => { e.textContent = s; e.classList.toggle("low", s <= 5); });
+  document.querySelectorAll(".tbar").forEach((e) => { e.firstChild.style.width = (100 * left) / st.total + "%"; e.classList.toggle("low", s <= 5); });
+  if (st.phase === "draw" && s !== lastTickSec) {
+    lastTickSec = s;
+    if (s <= 5 && s > 0 && activePads().some((p) => !p.fin)) beep(880, 0.06, 0.08);
+  }
+  if (st.phase === "draw" && left <= 0) {
+    let any = false;
+    for (const pad of activePads()) if (!pad.fin) { finishPad(pad); any = true; }
+    if (any) render();
+  }
+}
+setInterval(clientTick, 150);
+
+// =====================================================================
+//  SCREENS
+// =====================================================================
+function screen(...kids) { const m = $("#main"); m.innerHTML = ""; m.append(...kids.flat().filter(Boolean)); window.scrollTo(0, 0); }
+function header() {
+  const right = $("#right"); right.innerHTML = "";
+  const me = $("#me");
+  if (C.screen === "room" && C.code) {
+    me.textContent = (C.tv ? "📺 " : "") + (C.me && !C.tv ? C.me.name + " · " : "") + C.code;
+    right.append(el("span", { id: "cdot", class: "dot " + (C.up ? "ok" : "bad") }));
+    right.append(el("button", { class: "icon", title: t("sound"), onclick: () => { muted = !muted; store.set("dj_mute", muted); header(); } }, muted ? "🔇" : "🔊"));
+    right.append(el("button", { class: "icon", title: t("menu"), onclick: openMenu }, "☰"));
+  } else {
+    me.textContent = "👑 " + t("title");
+    right.append(el("div", { class: "seg" },
+      ["en", "es"].map((l) => el("button", { class: LANG === l ? "on" : "", onclick: () => { LANG = l; store.set("dj_lang", l); render(); } }, l.toUpperCase()))));
+  }
+}
+function modal(...kids) {
+  const m = el("div", { class: "modal", onclick: (e) => { if (e.target === m) m.remove(); } }, el("div", { class: "box" }, ...kids));
+  document.body.append(m);
+  return m;
+}
+const closeBtn = () => el("button", { class: "btn ghost", onclick: (e) => e.target.closest(".modal").remove() }, t("close"));
+function openMenu() {
+  const st = C.st;
+  let m;
+  const items = [];
+  if (C.isHost && st) {
+    if (["reveal", "draw", "guess", "pick"].includes(st.phase)) items.push(el("button", { class: "btn ghost", onclick: () => { m.remove(); hSkipRound(); } }, "🔄 " + t("skipRound")));
+    if (st.phase !== "lobby" && st.phase !== "final") items.push(el("button", { class: "btn ghost", onclick: () => { if (confirm(t("endConfirm"))) { m.remove(); hEnd(); } } }, "🏁 " + t("endGame")));
+  }
+  items.push(el("button", { class: "btn ghost", onclick: () => { m.remove(); showRules(); } }, "❓ " + t("howTo")));
+  items.push(el("button", { class: "btn", onclick: () => { if (confirm(t("leaveConfirm"))) { m.remove(); leaveRoom(true); } } }, "🚪 " + t("leave")));
+  items.push(el("button", { class: "btn ghost", onclick: () => m.remove() }, t("close")));
+  m = modal(el("h2", {}, t("menu")), items);
+}
+function showRules() {
+  modal(el("h2", {}, t("howTo")), el("ol", { class: "rules" }, t("rules").map((r) => el("li", {}, r))), el("p", { class: "small muted" }, t("scoring")), closeBtn());
+}
+function zoomImg(url, title) { modal(title ? el("h3", {}, title) : null, el("img", { src: url }), closeBtn()); }
+const galImg = (k, g) => drawingImg(g.tok, C.st.rid + ":" + k + ":" + g.tok.length);
+const pName = (id) => C.st?.players.find((p) => p.id === id)?.name || "?";
+const pObj = (id) => C.st?.players.find((p) => p.id === id);
+const twistLabel = (tw) => t("twists")[tw] || "";
+function twistBanner(tw) {
+  if (!tw || (tw === "none" && C.st?.set?.twist !== "random")) return null;
+  return el("div", { class: "twist" }, el("b", {}, t("twistNow", { t: twistLabel(tw) })), el("div", { class: "small" }, t("twistDesc")[tw] || ""));
+}
+function roundLabel() {
+  const st = C.st;
+  return st.maxR ? t("roundOf", { n: st.round, m: st.maxR }) : t("round", { n: st.round });
+}
+const judgeBar = () => { const j = pObj(C.st.judge); return el("div", { class: "judgebar" }, avatar(j), t("judgeIs", { name: j?.name || "?" }) + (C.st.judge === C.me?.id ? " (" + t("you") + ")" : "")); };
+
+function render() {
+  header();
+  if (C.screen === "home") return homeScreen();
+  if (C.screen === "hostSetup") return hostSetupScreen();
+  if (C.screen === "join") return joinScreen();
+  const st = C.st;
+  if (!st) {
+    C.key = "";
+    return screen(el("div", { class: "card center" }, el("h2", {}, t("findingRoom", { code: C.code })),
+      el("p", { class: "muted" }, t("connecting")),
+      el("button", { class: "btn ghost sm", onclick: () => leaveRoom() }, t("back"))));
+  }
+  const pv = myPriv(), iAmIn = st.parts.includes(C.me.id) && !C.tv;
+  const pk = pv ? [pv.role, pv.leg, pv.slots.join(",")].join(":") : "";
+  const key = [st.phase, st.rid, st.phase === "draw" ? st.leg : "", pk, iAmIn, LANG].join("|");
+  if (key === C.key && C.upd) { C.upd(); return; }
+  C.key = key; C.upd = null; C.updGal = null;
+  ({ lobby: lobbyScreen, reveal: revealScreen, draw: drawScreen, guess: guessScreen, pick: pickScreen, result: resultScreen, final: finalScreen }[st.phase] || lobbyScreen)();
+  C.upd?.();
+}
+
+// ---- home ----
+function homeScreen() {
+  const hs = store.get("dj_host"), ps = store.get("dj_player");
+  const fresh = (x) => x && now() - x.ts < 6 * 3600e3;
+  const resume = [];
+  if (fresh(hs)) resume.push(el("div", { class: "card" },
+    el("button", { class: "btn teal", onclick: () => { H = hs.H; hostStart(null, true); } }, "▶ " + t("resumeHost", { code: hs.H.code })),
+    el("button", { class: "btn ghost sm", onclick: () => { store.set("dj_host", null); render(); } }, t("forget"))));
+  else if (fresh(ps) && ps.name) resume.push(el("div", { class: "card" },
+    el("button", { class: "btn teal", onclick: () => joinRoom(ps.code, ps.name) }, "▶ " + t("resumeJoin", { code: ps.code })),
+    el("button", { class: "btn ghost sm", onclick: () => { store.set("dj_player", null); render(); } }, t("forget"))));
+  screen(
+    LANG === "es" ? el("div", { class: "logo" }, el("b", {}, "Juez"), " ", el("span", {}, "de Garabatos"), " 👑")
+      : el("div", { class: "logo" }, el("span", {}, "Doodle"), " ", el("b", {}, "Judge"), " 👑"),
+    el("p", { class: "tag" }, t("tagline")),
+    resume,
+    el("button", { class: "btn", onclick: () => { C.screen = "hostSetup"; render(); } }, "🎨 " + t("host")),
+    el("button", { class: "btn imp", onclick: () => { C.screen = "join"; render(); } }, "📱 " + t("join")),
+    el("div", { class: "card" }, el("h3", {}, t("howTo")), el("ol", { class: "rules" }, t("rules").map((r) => el("li", {}, r))),
+      el("p", { class: "small muted" }, t("scoring"))),
+    el("p", { class: "hint" }, t("relayNote")),
+  );
+}
+function nameField(id) {
+  return [el("label", { class: "f", for: id }, t("yourName")),
+    el("input", { class: "t", id, maxlength: 16, placeholder: t("namePh"), autocomplete: "nickname", value: store.get("dj_name") || "" })];
+}
+function hostSetupScreen() {
+  const go = (e) => {
+    e?.preventDefault();
+    const name = $("#hn").value.trim();
+    if (!name) { toast(t("nameTaken")); return; }
+    store.set("dj_name", name);
+    hostStart(name);
+  };
+  screen(el("form", { class: "card", onsubmit: go }, el("h2", {}, "🎨 " + t("host")), nameField("hn"),
+    el("button", { class: "btn", type: "submit" }, t("create"))),
+    el("button", { class: "btn ghost", onclick: () => { C.screen = "home"; render(); } }, t("back")));
+  setTimeout(() => { const i = $("#hn"); if (i && !i.value) i.focus(); }, 50);
+}
+function joinScreen() {
+  const pre = (params.get("room") || "").toUpperCase();
+  const go = (e, tv) => {
+    e?.preventDefault();
+    const code = $("#jc").value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const name = $("#jn")?.value.trim();
+    if (code.length !== 5 || [...code].some((c) => !ALPH.includes(c))) { toast(t("roomCode") + "?"); $("#jc").focus(); return; }
+    if (!tv && !name) { toast(t("nameTaken")); $("#jn").focus(); return; }
+    if (!tv) store.set("dj_name", name);
+    joinRoom(code, name, tv);
+  };
+  screen(el("form", { class: "card", onsubmit: (e) => go(e, false) }, el("h2", {}, "📱 " + t("join")),
+    el("label", { class: "f", for: "jc" }, t("roomCode")),
+    el("input", { class: "t code-in", id: "jc", maxlength: 5, autocomplete: "off", autocapitalize: "characters", value: pre, placeholder: "ABCDE" }),
+    nameField("jn"),
+    el("button", { class: "btn imp", type: "submit" }, t("joinBtn"))),
+    el("button", { class: "btn ghost sm", onclick: (e) => go(e, true) }, "📺 " + t("tvMode")),
+    el("button", { class: "btn ghost", onclick: () => { C.screen = "home"; render(); } }, t("back")));
+  setTimeout(() => { const i = pre ? $("#jn") : $("#jc"); if (i && !i.value) i.focus(); }, 50);
+}
+
+// ---- shared bits ----
+function playersCard(editable) {
+  const box = el("div", { class: "players" });
+  let last = "";
+  const h = el("h3", {});
+  const fill = () => {
+    const st = C.st;
+    h.textContent = t("players") + " (" + st.players.length + ")";
+    const k = JSON.stringify(st.players.map((p) => [p.id, p.name, p.on, p.col])) + st.hostId;
+    if (k === last) return; last = k;
+    box.innerHTML = "";
+    for (const p of st.players) {
+      const tags = [];
+      if (p.id === st.hostId) tags.push("🏠");
+      if (p.id === C.me?.id) tags.push("(" + t("you") + ")");
+      box.append(el("span", { class: "chip" + (p.on ? "" : " off") }, avatar(p), p.name, tags.length ? el("span", { class: "muted small" }, tags.join(" ")) : null,
+        editable && p.id !== st.hostId ? el("button", { class: "x", onclick: () => { if (confirm(t("removeConfirm", { name: p.name }))) hRemove(p.id); } }, "✕") : null));
+    }
+  };
+  fill();
+  return { el: el("div", { class: "card" }, h, box), fill };
+}
+function scoreList(gains) {
+  const sorted = C.st.players.slice().sort((a, b) => b.score - a.score);
+  return el("div", {}, sorted.map((p) => el("div", { class: "score" }, avatar(p), el("span", { class: "n" }, p.name + (p.id === C.me?.id ? " (" + t("you") + ")" : "")),
+    gains && gains[p.id] ? el("span", { class: "g" }, "+" + gains[p.id]) : el("span", { class: "g" }),
+    el("span", { class: "p" }, p.score))));
+}
+function seg(opts, val, on) {
+  return el("div", { class: "seg" }, opts.map(([v, label]) =>
+    el("button", { class: v === val ? "on" : "", type: "button", onclick: () => on(v) }, label)));
+}
+function peekBox() {
+  const st = C.st, pv = myPriv();
+  if (C.tv || !st.parts.includes(C.me.id)) return null;
+  const b = el("div", { class: "peek" }, t("holdPeek"));
+  const show = (e) => {
+    e.preventDefault();
+    if (!pv) { b.textContent = t("gettingSecret"); return; }
+    b.innerHTML = "";
+    if (pv.role === "judge") b.append(el("span", {}, t("youJudge"), pv.cat ? " · " + t("category2", { c: pv.cat }) : ""));
+    else b.append(el("span", {}, t("secretWord") + ": ", el("b", {}, pv.word), pv.cat ? " · " + pv.cat : ""));
+  };
+  const hide = () => { b.textContent = t("holdPeek"); };
+  b.addEventListener("pointerdown", show); b.addEventListener("pointerup", hide); b.addEventListener("pointerleave", hide); b.addEventListener("pointercancel", hide);
+  b.addEventListener("contextmenu", (e) => e.preventDefault());
+  return b;
+}
+// who has finished drawing
+function progressChips() {
+  const box = el("div", { class: "players", style: "justify-content:center" });
+  const head = el("p", { class: "center muted", style: "margin:4px 0" });
+  let last = "";
+  const fill = () => {
+    const st = C.st, k0 = st.doneK.join() + "|" + st.drawers.map((id) => pObj(id)?.on).join();
+    if (k0 === last) return; last = k0;
+    head.textContent = t("doneN", { n: st.doneK.length, m: st.drawers.length });
+    box.innerHTML = "";
+    // by the drawing's owner — who is really drawing which card stays secret
+    st.drawers.forEach((id, k) => { const p = pObj(id); box.append(el("span", { class: "chip" + (st.doneK.includes(k) ? "" : " off") }, avatar(p), p?.name || "?", st.doneK.includes(k) ? " ✓" : " ✏️")); });
+  };
+  fill();
+  return { el: el("div", { class: "card" }, head, box), fill };
+}
+// the anonymous cards, shuffled, labelled A, B, C…
+function cardsGrid(opts = {}) {
+  const grid = el("div", { class: "dgrid" });
+  let last = "";
+  const fill = (force) => {
+    const st = C.st;
+    const k0 = st.cards.map((k) => (C.gal[k] ? C.gal[k].tok.length : "-")).join() + "|" + (opts.sel ? opts.sel() : "") + "|" + (opts.sig ? opts.sig() : "");
+    if (k0 === last && !force) return; last = k0;
+    grid.innerHTML = "";
+    const sel = opts.sel ? opts.sel() : null;
+    st.cards.forEach((k, i) => {
+      const g = C.gal[k], L = LETTERS[i];
+      const img = g && g.tok.length ? el("img", { src: galImg(k, g), alt: t("cardN", { l: L }), onclick: () => zoomImg(galImg(k, g), t("cardN", { l: L })) })
+        : el("div", { class: "ph" }, g ? "🫥" : "⏳");
+      grid.append(el("div", { class: "dcard" + (sel === k ? " fav" : ""), "data-k": k },
+        el("div", { class: "lt" }, L), sel === k ? el("div", { class: "crownmark" }, "👑") : null,
+        img, opts.extra ? opts.extra(k, i) : null));
+    });
+  };
+  fill(true);
+  return { el: grid, fill };
+}
+
+// ---- lobby ----
+function lobbyScreen() {
+  const st = C.st, host = C.isHost;
+  const link = joinUrl(C.code);
+  const pc = playersCard(host);
+  const share = el("div", { class: "card center" },
+    el("div", { class: "muted small" }, t("roomCode")), el("div", { class: "code" }, C.code),
+    (host || C.tv) ? el("div", { class: "qr", html: QR.svg(link) }) : null,
+    (host || C.tv) ? el("p", { class: "small muted" }, t("shareHint")) : null,
+    host ? el("div", { class: "row" },
+      el("button", { class: "btn ghost sm", onclick: async () => { try { await navigator.clipboard.writeText(link); toast(t("linkCopied")); } catch { prompt("", link); } } }, "🔗 " + t("copyLink")),
+      navigator.share ? el("button", { class: "btn ghost sm", onclick: () => navigator.share({ title: t("title"), text: t("roomCode") + ": " + C.code, url: link }).catch(() => {}) }, "📤 " + t("share")) : null) : null);
+  const setBox = el("div", { class: "card" });
+  const roundsOpts = [[-1, "👑×1"], [-2, "👑×2"], [5, "5"], [8, "8"], [0, "∞"]];
+  const fillSet = () => {
+    const s = C.st.set;
+    setBox.innerHTML = "";
+    setBox.append(el("h3", {}, "⚙️ " + t("settings")));
+    const adult = PACKS[s.cat]?.adult ? el("p", { class: "banner" }, t("adultNote")) : null;
+    if (host) {
+      const ch = (fn) => { fn(H.st.set); hPublish(); };
+      const onoff = (key) => seg([[true, t("on")], [false, t("off")]], !!s[key], (v) => ch((x) => { x[key] = v; }));
+      const sel = el("select", { class: "t", onchange: (e) => ch((x) => { x.cat = e.target.value; }) },
+        el("optgroup", { label: t("modes") },
+          el("option", { value: "normal" }, "🎨 " + t("normalMode")),
+          el("option", { value: "mix" }, "🎲 " + t("mix")),
+          MODES.map((m) => el("option", { value: m.id }, m.e + " " + m[LANG]))),
+        el("optgroup", { label: t("cats") }, CATS.map((c) => el("option", { value: c.id }, c.e + " " + c[LANG]))),
+        el("option", { value: "custom" }, "✏️ " + t("custom")));
+      sel.value = s.cat;
+      const tw = el("select", { class: "t", onchange: (e) => ch((x) => { x.twist = e.target.value; }) },
+        TWISTS.map((k) => el("option", { value: k }, twistLabel(k))));
+      tw.value = s.twist || "none";
+      setBox.append(el("div", { class: "set" },
+        el("span", { class: "k" }, t("category")), sel, adult,
+        el("span", { class: "k" }, t("guessMode")), seg([["type", t("gmType")], ["pick", t("gmPick")]], s.guess, (v) => ch((x) => { x.guess = v; })),
+        el("span", { class: "small muted" }, t("gmHint")),
+        el("span", { class: "k" }, "😈 " + t("sab")), onoff("sab"), el("span", { class: "small muted" }, t("sabHint")),
+        el("span", { class: "k" }, "🃏 " + t("odd")), onoff("odd"), el("span", { class: "small muted" }, t("oddHint")),
+        el("span", { class: "k" }, "🌀 " + t("twist")), tw,
+        el("span", { class: "k" }, t("drawTime")), seg([[45, "45s"], [60, "60s"], [90, "90s"], [120, "2m"]], s.time, (v) => ch((x) => { x.time = v; })),
+        el("span", { class: "k" }, t("rounds")), seg(roundsOpts, s.rounds, (v) => ch((x) => { x.rounds = v; })),
+        el("span", { class: "small muted" }, t("lapsHint")),
+        el("span", { class: "k" }, t("hint")), onoff("hint"),
+        el("span", { class: "k" }, t("language")), seg([["en", "English"], ["es", "Español"]], C.st.lang, (v) => { H.st.lang = v; LANG = v; hPublish(); }),
+      ));
+      if (s.cat === "custom") {
+        const ta = el("textarea", { class: "t", placeholder: "pizza, castle, robot…" });
+        ta.value = H.custom.join(", ");
+        const cnt = el("p", { class: "small muted" }, t("customN", { n: H.custom.length }));
+        ta.addEventListener("input", () => { cnt.textContent = t("customN", { n: new Set(ta.value.split(/[,\n]/).map((x) => x.trim()).filter(Boolean)).size }); });
+        ta.addEventListener("change", () => {
+          H.custom = [...new Set(ta.value.split(/[,\n]/).map((x) => x.trim()).filter(Boolean).map((x) => x.slice(0, 30)))];
+          H.used = {}; H.st.customN = H.custom.length; hPublish();
+        });
+        setBox.append(el("p", { class: "small muted" }, t("customHint")), ta, cnt);
+      }
+    } else {
+      const ro = roundsOpts.find(([v]) => v === s.rounds);
+      setBox.append(el("div", { class: "summary" },
+        el("span", {}, packLabel(s.cat)),
+        el("span", {}, s.guess === "pick" ? t("gmPick") : t("gmType")),
+        el("span", {}, "😈 " + t("sab") + ": " + (s.sab ? t("on") : t("off"))),
+        el("span", {}, "🃏 " + t("odd") + ": " + (s.odd ? t("on") : t("off"))),
+        s.twist && s.twist !== "none" ? el("span", {}, "🌀 " + twistLabel(s.twist)) : null,
+        el("span", {}, "⏱ " + s.time + "s"),
+        el("span", {}, "🏁 " + t("rounds") + ": " + (ro ? ro[1] : s.rounds)),
+        el("span", {}, "👑 " + t("hint") + ": " + (s.hint ? t("on") : t("off")))), adult);
+    }
+  };
+  fillSet();
+  const startBox = el("div", {});
+  let lastStart = "";
+  const fillStart = () => {
+    const n = C.st.players.filter((p) => p.on).length;
+    const sk = n + ":" + C.st.set.cat + ":" + C.st.customN;
+    if (sk === lastStart) return; lastStart = sk;
+    startBox.innerHTML = "";
+    if (host) {
+      const customBad = C.st.set.cat === "custom" && H.custom.length < 1;
+      startBox.append(el("button", { class: "btn teal", disabled: n < 3 || customBad || null, onclick: () => hNewRound() }, "▶ " + t("start")));
+      if (n < 3) startBox.append(el("p", { class: "hint" }, t("need3")));
+    } else if (!C.tv) startBox.append(el("p", { class: "center muted" }, el("span", { class: "wobble", style: "display:inline-block" }, "✏️"), " " + t("waitHost")));
+  };
+  fillStart();
+  screen(el("h2", { class: "center" }, t("lobby")), share, startBox, pc.el, setBox,
+    el("button", { class: "btn ghost sm", onclick: showRules }, "❓ " + t("howTo")));
+  let lastSet = "";
+  C.upd = () => { pc.fill(); fillStart(); const sj = JSON.stringify(C.st.set) + C.st.lang + C.st.customN; if (sj !== lastSet) { lastSet = sj; if (!host || !setBox.contains(document.activeElement)) fillSet(); } };
+}
+
+// ---- reveal: everyone privately checks their card ----
+function revealScreen() {
+  const st = C.st;
+  let lastR = "";
+  const status = el("p", { class: "center muted" });
+  const ctrl = el("div", {});
+  const kids = [el("h2", { class: "center" }, roundLabel()), judgeBar(), twistBanner(st.twist)];
+  let readyBtn = null;
+  if (C.tv || !st.parts.includes(C.me.id)) {
+    kids.push(el("div", { class: "card center" }, el("h2", {}, "🤫 " + (LANG === "es" ? "¡Revisen su tarjeta secreta!" : "Everyone, check your secret card!")),
+      !C.tv ? el("p", {}, t("newPlayer")) : null));
+  } else {
+    const pv = myPriv();
+    const card = el("div", { class: "secret" });
+    const cover = () => { card.innerHTML = ""; card.append(el("div", { class: "cover" }, pv ? t("holdSecret") : t("gettingSecret"))); };
+    const show = (e) => {
+      e.preventDefault();
+      if (!pv) return;
+      C.seen = st.rid;
+      card.innerHTML = "";
+      const add = (...xs) => card.append(...xs.filter(Boolean));
+      if (pv.role === "judge") add(el("div", { class: "word" }, t("youJudge")), el("div", { class: "lbl" }, pv.cat ? t("category2", { c: pv.cat }) : t("noCat")), el("p", {}, t("judgeTip")));
+      else {
+        if (pv.role === "sab") add(el("div", { class: "role" }, t("youSab")));
+        if (pv.role === "locked") add(el("div", { class: "role" }, t("youLocked")));
+        add(el("div", { class: "lbl" }, t("secretWord")), el("div", { class: "word" }, pv.word), pv.cat ? el("div", { class: "lbl" }, t("category2", { c: pv.cat })) : null,
+          el("p", {}, pv.role === "sab" ? t("sabTip", { name: pName(pv.victim) }) : pv.role === "locked" ? t("lockedTip") : t("drawTip")));
+      }
+      readyBtn.disabled = false;
+    };
+    card.addEventListener("pointerdown", show);
+    for (const ev of ["pointerup", "pointerleave", "pointercancel"]) card.addEventListener(ev, cover);
+    card.addEventListener("contextmenu", (e) => e.preventDefault());
+    cover();
+    readyBtn = el("button", { class: "btn teal", disabled: C.seen === st.rid ? null : true, onclick: () => { sendHost({ t: "ready" }); readyBtn.disabled = true; readyBtn.textContent = "✓"; } }, t("ready"));
+    kids.push(card, readyBtn);
+  }
+  kids.push(status, ctrl);
+  screen(...kids);
+  C.upd = () => {
+    const s = C.st, parts = s.parts.map(pObj).filter(Boolean);
+    const rk = JSON.stringify(parts.map((p) => [p.name, p.ready, p.on]));
+    if (rk === lastR) return; lastR = rk;
+    status.innerHTML = "";
+    status.append(t("readyWait", { n: parts.filter((p) => p.ready).length, m: parts.length }), el("div", { class: "players", style: "justify-content:center" },
+      parts.map((p) => el("span", { class: "chip" + (p.ready ? "" : " off") }, avatar(p), p.name, p.ready ? " ✓" : ""))));
+    if (pObj(C.me.id)?.ready && readyBtn) { readyBtn.disabled = true; readyBtn.textContent = "✓ " + t("ready"); }
+    ctrl.innerHTML = "";
+    if (C.isHost) ctrl.append(el("button", { class: "btn ghost", onclick: () => hStartDraw() }, "⏩ " + t("startDrawing")));
+  };
+}
+
+// ---- drawing (everyone at once) ----
+function drawScreen() {
+  const st = C.st, pv = myPriv(), iAmIn = st.parts.includes(C.me.id) && !C.tv;
+  const legNote = st.twist === "pass" ? " · " + t("passLeg", { n: st.leg }) : "";
+  const sub = el("div", { class: "muted small" }, roundLabel() + (st.twist !== "none" ? " · " + twistLabel(st.twist) : "") + legNote);
+  const who = el("div", { class: "who" });
+  const top = el("div", {}, sub, el("div", { class: "turnbar" }, who, el("div", { class: "timer" }, "")), el("div", { class: "tbar" }, el("i")));
+  const prog = progressChips();
+  const role = pv && pv.leg === st.leg ? pv.role : null;
+  const slots = pv && pv.leg === st.leg ? pv.slots : [];
+  const kids = [top];
+  let upd2 = null;
+  if (!iAmIn || !pv) {
+    who.textContent = "🎨 " + t("watchWait");
+    if (iAmIn && !pv) kids.push(el("p", { class: "hint" }, t("gettingSecret")));
+    kids.push(judgeBar(), el("div", { class: "card bigwait" }, el("div", { class: "e wobble" }, "✏️"), el("h2", {}, t("watchWait"))), prog.el);
+    if (!iAmIn && !C.tv) kids.push(el("p", { class: "hint" }, t("newPlayer")));
+  } else if (role === "judge") {
+    who.textContent = t("youJudge");
+    kids.push(el("div", { class: "card bigwait" }, el("div", { class: "e wobble" }, "👑"), el("h2", {}, t("judgeWait")),
+      pv.cat ? el("p", {}, t("category2", { c: pv.cat })) : null), prog.el);
+  } else if (!slots.length) {
+    // 🔒 locked out: watch someone draw my card live
+    who.textContent = role === "locked" ? t("youLocked") : "🎨 " + t("watchWait");
+    if (role === "locked" && pv.own >= 0) {
+      const cv = el("canvas", {}), board = new Board(cv);
+      C.conn?.sub(TOP(C.code) + "/d/" + pv.own);
+      if (!C.watch || C.watch.k !== pv.own || C.watch.rid !== st.rid) C.watch = { rid: st.rid, k: pv.own, tok: [], board: null };
+      board.load(C.watch.tok); C.watch.board = board;
+      kids.push(el("div", { class: "banner lock" }, t("lockedWatch")), el("div", { class: "boardwrap sabw" }, cv), el("p", { class: "hint" }, t("lockedMuted")));
+    } else if (st.twist === "pass" && st.leg === 1) kids.push(el("p", { class: "hint" }, t("passWait")));
+    kids.push(prog.el, peekBox());
+  } else {
+    // I draw one card (or two, if I'm the saboteur)
+    const pads = [], wraps = [];
+    if (C.tab >= slots.length) C.tab = 0;
+    const owner = (k) => st.drawers[k];
+    const labelFor = (k) => owner(k) === C.me.id ? "🎨 " + t("yourCard") : "😈 " + t("forName", { name: pName(owner(k)) });
+    const passing = st.twist === "pass" && st.leg === 2;
+    const k0 = slots[0];
+    who.textContent = passing ? t("passNow", { name: pName(owner(k0)) }) : t("drawThis", { w: pv.word });
+    if (who.textContent.length > 26) who.classList.add("long");
+    for (const k of slots) {
+      const cv = el("canvas", {}), board = new Board(cv);
+      const mineCls = owner(k) === C.me.id ? " mine" : " sabw";
+      const wrap = el("div", { class: "boardwrap" + mineCls }, cv);
+      const pad = makePad(board, k);
+      if (st.twist === "blind" && !pad.fin) wrap.append(el("div", { class: "over blind" }, t("blindCover")));
+      if (pad.fin) wrap.append(el("div", { class: "over fin" }, "✓"));
+      pads.push(pad); wraps.push(wrap);
+    }
+    const tabs = slots.length > 1 ? el("div", { class: "tabs" }) : null;
+    const cur = () => pads[C.tab];
+    const showTab = () => {
+      wraps.forEach((w, i) => (w.style.display = i === C.tab ? "" : "none"));
+      if (tabs) {
+        tabs.innerHTML = "";
+        slots.forEach((k, i) => tabs.append(el("button", { class: (i === C.tab ? "on" : "") + (owner(k) === C.me.id ? "" : " sab"), onclick: () => { C.tab = i; showTab(); sel(); } },
+          labelFor(k) + (pads[i].fin ? " ✓" : ""))));
+      }
+      const db = tools.querySelector(".btn.teal"); if (db) db.disabled = cur().fin || null;
+    };
+    const tb = (id, icon, title) => el("button", { "data-t": id, title, onclick: () => { cur().board.tool = id; sel(); } }, icon);
+    const sel = () => {
+      const b = cur().board;
+      tools.querySelectorAll(".tools button[data-t]").forEach((x) => x.classList.toggle("on", x.dataset.t === b.tool));
+      tools.querySelectorAll(".colors button").forEach((x, i) => x.classList.toggle("on", i === b.color && b.tool !== "eraser"));
+      tools.querySelectorAll(".sizes button").forEach((x, i) => x.classList.toggle("on", i === b.size));
+    };
+    const oneLine = st.twist === "oneline";
+    const tools = el("div", {},
+      oneLine ? el("p", { class: "hint" }, t("oneLineTip")) : el("div", { class: "tools" },
+        tb("pen", "✏️", t("tools").pen), tb("fill", "🪣", t("tools").fill), tb("eraser", "🧽", t("tools").eraser),
+        el("button", { title: t("tools").undo, onclick: () => cur().board.act("undo") }, "↩️"),
+        el("button", { title: t("tools").clear, onclick: () => cur().board.act("clear") }, "🗑️")),
+      el("div", { class: "colors" }, PAL.map((c, i) => el("button", { style: `background:${c}`, "aria-label": c, onclick: () => { const b = cur().board; b.color = i; if (b.tool === "eraser") b.tool = "pen"; sel(); } }))),
+      el("div", { class: "sizes" }, SIZES.map((s, i) => el("button", { onclick: () => { cur().board.size = i; sel(); } }, el("i", { style: `width:${Math.max(6, s * 0.55)}px;height:${Math.max(6, s * 0.55)}px` })))),
+      el("button", { class: "btn teal", onclick: () => {
+        finishPad(cur());
+        const next = pads.findIndex((p) => !p.fin);
+        if (next >= 0) C.tab = next;
+        render();
+      } }, t("done")));
+    if (pv.role === "sab") kids.push(el("div", { class: "banner lock" }, t("sabTip", { name: pName(pv.victim) })));
+    kids.push(tabs, ...wraps, tools, prog.el, peekBox());
+    showTab(); sel();
+    upd2 = () => {
+      pads.forEach((p, i) => {
+        if (p.fin && !wraps[i].querySelector(".over.fin")) { wraps[i].querySelector(".blind")?.remove(); wraps[i].append(el("div", { class: "over fin" }, p.lineUsed ? "✓" : "⏰ " + t("timesUp"))); }
+      });
+      showTab();
+    };
+  }
+  if (C.tv) screen(el("div", {}, top, judgeBar(), el("div", { class: "card bigwait" }, el("div", { class: "e wobble" }, "✏️"), el("h2", {}, t("watchWait"))), prog.el));
+  else screen(...kids);
+  C.upd = () => { prog.fill(); upd2?.(); };
+}
+
+// ---- judge guesses the word ----
+function triesBox() {
+  const box = el("div", { class: "tries" });
+  const fill = () => {
+    box.innerHTML = "";
+    for (const tr of C.st.guess?.tries || []) box.append(el("span", { class: tr.ok ? "yes" : "no" }, tr.txt));
+  };
+  fill();
+  return { el: box, fill };
+}
+function guessScreen() {
+  const st = C.st, g = st.guess, isJudge = st.judge === C.me.id && !C.tv;
+  const jn = pName(st.judge);
+  const grid = cardsGrid();
+  const tries = triesBox();
+  const kids = [el("div", { class: "turnbar" }, el("div", { class: "who" }, isJudge ? t("guessYou") : t("guessOther", { name: jn })), el("div", { class: "timer" })),
+    el("div", { class: "tbar" }, el("i"))];
+  let input = null, btn = null, lastN = g.tries.length;
+  if (isJudge) {
+    if (g.mode === "pick") {
+      kids.push(el("div", { class: "choices" }, g.choices.map((w, i) => el("button", { class: "btn imp",
+        onclick: (e) => { sendHost({ t: "guess", i }); document.querySelectorAll(".choices .btn").forEach((b) => (b.disabled = true)); e.target.classList.add("pulse"); } }, w))));
+    } else {
+      input = el("input", { class: "t", placeholder: t("guessPh"), maxlength: 40, autocomplete: "off", autocapitalize: "off", spellcheck: "false" });
+      btn = el("button", { class: "btn imp", type: "submit" }, t("guessBtn"));
+      kids.push(el("form", { class: "gform", onsubmit: (e) => {
+        e.preventDefault();
+        const v = input.value.trim(); if (!v) return;
+        btn.disabled = true; input.disabled = true;
+        sendHost({ t: "guess", txt: v });
+      } }, input, btn), el("p", { class: "hint", id: "triesLeft" }, t("triesLeft", { n: 2 - g.tries.length })));
+    }
+  } else kids.push(el("p", { class: "center", style: "font-weight:800;font-size:18px" }, t("noHelp")));
+  kids.push(tries.el, grid.el);
+  screen(...kids);
+  C.updGal = () => grid.fill();
+  C.upd = () => {
+    tries.fill(); grid.fill();
+    const n = C.st.guess.tries.length;
+    if (isJudge && input && n !== lastN) {
+      lastN = n;
+      if (!C.st.guess.done) { toast(t("lastTry")); beep(300, .2); buzz(120); input.disabled = false; btn.disabled = false; input.value = ""; input.focus(); }
+      const tl = $("#triesLeft"); if (tl) tl.textContent = t("triesLeft", { n: Math.max(0, 2 - n) });
+    }
+  };
+}
+
+// ---- judge crowns a favorite (and the locked-out player names the saboteur) ----
+function pickScreen() {
+  const st = C.st, g = st.guess, isJudge = st.judge === C.me.id && !C.tv, jn = pName(st.judge);
+  const pv = myPriv();
+  const isVictim = pv?.role === "locked" && st.pick?.acc && !C.tv;
+  const head = el("div", { class: "reveal " + (g.ok ? "ok" : "no") },
+    el("div", { class: "big" }, g.ok ? t("gotIt", { name: jn }) : t("missed", { name: jn })),
+    el("div", {}, t("wordWas") + ":"), el("div", { class: "w" }, g.word));
+  const overNote = el("p", { class: "center small" });
+  const tries = triesBox();
+  const grid = cardsGrid({
+    sel: () => (isJudge && C.myPick != null ? C.myPick : C.st.pick?.k),
+    extra: isJudge ? (k) => el("button", { class: "btn gold", onclick: () => { C.myPick = k; sendHost({ t: "pick", k }); beep(700, .08); grid.fill(true); } }, t("crown")) : null,
+  });
+  const accBox = el("div", {});
+  const fillAcc = () => {
+    accBox.innerHTML = "";
+    if (!isVictim) return;
+    const cands = C.st.parts.filter((id) => id !== C.me.id && id !== C.st.judge);
+    accBox.append(el("div", { class: "card" }, el("h3", {}, t("accuseTitle")), el("p", { class: "small muted" }, t("accuseSub")),
+      el("div", { class: "players" }, cands.map((id) => el("button", { class: "chip" + (C.myAcc === id ? " pick" : ""),
+        onclick: () => { C.myAcc = id; sendHost({ t: "accuse", to: id }); fillAcc(); } }, avatar(pObj(id)), pName(id)))),
+      C.myAcc ? el("p", { class: "small" }, t("accusePicked", { name: pName(C.myAcc) })) : null));
+  };
+  fillAcc();
+  const ctrl = el("div", {});
+  const waitP = el("p", { class: "center muted" });
+  screen(head, overNote, tries.el,
+    el("div", { class: "turnbar" }, el("div", { class: "who" + (isJudge ? "" : " long") }, isJudge ? t("pickYou") : t("pickOther", { name: jn })), el("div", { class: "timer" })),
+    el("div", { class: "tbar" }, el("i")),
+    accBox, waitP, ctrl, grid.el);
+  C.updGal = () => grid.fill();
+  let lastC = "";
+  C.upd = () => {
+    const s = C.st;
+    grid.fill(); tries.fill();
+    overNote.textContent = s.guess.over ? t("overruled") : "";
+    if (s.guess.ok && !head.classList.contains("ok")) { head.className = "reveal ok"; head.firstChild.textContent = t("gotIt", { name: jn }); }
+    waitP.textContent = s.pick?.k != null && s.pick.acc && !s.pick.accDone && !isVictim ? t("accuseWait") : "";
+    const ck = [s.guess.ok, s.pick?.k].join();
+    if (ck === lastC) return; lastC = ck;
+    ctrl.innerHTML = "";
+    if (C.isHost) {
+      if (!s.guess.ok) ctrl.append(el("button", { class: "btn ghost sm", onclick: () => hCountIt() }, t("countIt")));
+      if (s.pick?.k != null) ctrl.append(el("button", { class: "btn ghost sm", style: "margin-left:6px", onclick: () => hResult({}) }, "📣 " + t("revealNow")));
+    }
+  };
+}
+
+// ---- round result ----
+function resultScreen() {
+  const st = C.st, r = st.res, jn = pName(r.judge);
+  const kids = [];
+  if (r.aborted) {
+    kids.push(el("div", { class: "reveal no" }, el("div", { class: "big" }, t("aborted")),
+      el("p", {}, r.aborted === "judge" ? t("abortJudge") : r.aborted === "few" ? t("abortFew") : ""),
+      el("div", {}, t("wordWas") + ":"), el("div", { class: "w" }, r.word)));
+  } else {
+    kids.push(el("div", { class: "reveal " + (r.guessOk ? "ok" : "no") },
+      el("div", { class: "big" }, r.guessOk ? t("gotIt", { name: jn }) : t("missed", { name: jn })),
+      el("div", {}, t("wordWas") + ":"), el("div", { class: "w" }, r.word),
+      r.over ? el("p", { class: "small" }, t("overruled")) : null));
+    // crowned drawing
+    if (r.fav != null) {
+      const g = C.gal[r.fav], owner = r.owners[r.fav];
+      const realOther = r.favArtists.filter((a) => a !== owner);
+      kids.push(el("div", { class: "reveal gold" },
+        el("div", { class: "big" }, t("favWas", { name: pName(owner) })),
+        g && g.tok.length ? el("img", { class: "favpic", src: galImg(r.fav, g), onclick: () => zoomImg(galImg(r.fav, g)) }) : null,
+        realOther.length ? el("p", { style: "font-weight:800" }, t("favBy", { name: realOther.map(pName).join(" & ") })) : null));
+    } else kids.push(el("p", { class: "center muted" }, t("noFav")));
+    // saboteur
+    if (r.acc) {
+      const a = r.acc, v = { sab: pName(a.sab), victim: pName(a.victim), to: pName(a.to) };
+      kids.push(el("div", { class: "reveal dark" }, el("div", { class: "big", style: "font-size:22px" }, t("sabWas", v)),
+        el("p", {}, !a.to ? t("accNone", v) : a.ok ? t("accRight", v) : t("accWrong", v))));
+    }
+    // odd one out
+    if (r.odd) kids.push(el("div", { class: "reveal" }, el("div", { class: "big", style: "font-size:22px" }, t("oddWas", { name: pName(r.odd), w: r.oddWord })),
+      r.oddHit ? el("p", {}, t("oddFooled", { name: pName(r.odd) })) : null));
+    if (r.tries.length) kids.push(el("div", { class: "card center" }, el("h3", {}, t("judgeTries")),
+      el("div", { class: "tries" }, r.tries.map((tr) => el("span", { class: tr.ok ? "yes" : "no" }, tr.txt)))));
+  }
+  // every card with its real artist(s)
+  const grid = el("div", { class: "dgrid" });
+  const fillGrid = () => {
+    grid.innerHTML = "";
+    st.cards.forEach((k, i) => {
+      const g = C.gal[k], owner = r.owners[k], arts = r.artists[k] || [owner];
+      const by = arts.length > 1 ? t("drawnBy2", { a: pName(arts[0]), b: pName(arts[1]) }) : arts[0] !== owner ? "😈 " + t("drawnBy", { name: pName(arts[0]) }) : null;
+      grid.append(el("div", { class: "dcard" + (r.fav === k ? " fav" : "") },
+        el("div", { class: "lt" }, LETTERS[i]), r.fav === k ? el("div", { class: "crownmark" }, "👑") : null,
+        g && g.tok.length ? el("img", { src: galImg(k, g), onclick: () => zoomImg(galImg(k, g), pName(owner)) }) : el("div", { class: "ph" }, g ? "🫥" : "⏳"),
+        el("div", { class: "nm" }, avatar(pObj(owner)), el("span", {}, pName(owner)), r.odd === owner ? " 🃏" : null),
+        by ? el("div", { class: "by" }, by) : null));
+    });
+  };
+  fillGrid();
+  C.updGal = fillGrid;
+  kids.push(el("div", { class: "card" }, el("h3", {}, t("allCards")), grid));
+  kids.push(el("div", { class: "card" }, el("h3", {}, "🏆 " + t("scores")), scoreList(r.gains)));
+  if (C.isHost) {
+    const last = st.maxR && st.round >= st.maxR;
+    kids.push(el("button", { class: "btn teal", onclick: () => hNext() }, last ? t("finalResults") : t("nextRound")));
+    if (!last) kids.push(el("button", { class: "btn ghost", onclick: () => { if (confirm(t("endConfirm"))) hEnd(); } }, "🏁 " + t("endGame")));
+  } else kids.push(el("p", { class: "center muted" }, t("waitNext")));
+  screen(...kids);
+  if (!r.aborted && r.gains[C.me.id]) buzz([60, 40, 60]);
+  C.upd = null;
+}
+
+// ---- final ----
+function finalScreen() {
+  const st = C.st;
+  const sorted = st.players.slice().sort((a, b) => b.score - a.score);
+  const top = sorted[0];
+  const tied = sorted.filter((p) => top && p.score === top.score);
+  const podium = el("div", { class: "podium" });
+  const spots = [[sorted[1], 90, "#b8b8c8", "🥈"], [sorted[0], 130, "#f2b400", "🥇"], [sorted[2], 70, "#d08a4e", "🥉"]];
+  for (const [p, h, c, m] of spots) if (p) podium.append(el("div", { style: `min-height:${h}px;background:${c}` }, el("div", {}, m), el("div", { class: "n" }, p.name), el("div", {}, p.score)));
+  screen(el("h1", { class: "center" }, "🎉 " + t("gameOver")),
+    el("h2", { class: "center" }, tied.length > 1 ? t("tie2") : t("winner", { name: top?.name || "?" })),
+    podium,
+    el("div", { class: "card" }, scoreList()),
+    C.isHost ? el("button", { class: "btn teal", onclick: () => hPlayAgain() }, "🔁 " + t("playAgain")) : el("p", { class: "center muted" }, t("waitNext")));
+  if (st.players.length) { beep(660, .12); setTimeout(() => beep(880, .12), 150); setTimeout(() => beep(1100, .25), 300); }
+  C.upd = null;
+}
+
+// ---------------------------------------------------------------------
+//  Start up
+// ---------------------------------------------------------------------
+(function boot() {
+  const l = store.get("dj_lang"); if (l === "en" || l === "es") LANG = l;
+  const room = (params.get("room") || "").toUpperCase();
+  const ps = store.get("dj_player");
+  if (room) {
+    if (ps && ps.code === room && ps.name && now() - ps.ts < 6 * 3600e3) return joinRoom(room, ps.name);
+    C.screen = "join";
+  } else if (ps && ps.name && now() - ps.ts < 30 * 60e3 && !store.get("dj_host")) {
+    return joinRoom(ps.code, ps.name);
+  } else {
+    const hs = store.get("dj_host");
+    if (hs && now() - hs.ts < 30 * 60e3) { H = hs.H; return hostStart(null, true); }
+  }
+  render();
+})();
+</script>
+</body>
+</html>
